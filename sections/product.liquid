@@ -1,45 +1,1011 @@
-{% comment %}
-  This section is used in the product template to render product page with
-  media, content, and add-to-cart form.
+{% liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign condition = product.metafields.custom.condition.value | default: product.metafields.custom.condition
+  assign series = product.metafields.custom.series.value | default: product.metafields.custom.series | default: 'ONE PIECE'
+  assign character = product.metafields.custom.character.value | default: product.metafields.custom.character | default: 'Roronoa Zoro'
+  assign release_region = product.metafields.custom.release_region.value | default: product.metafields.custom.release_region | default: 'Japan'
+  assign item_notes = product.metafields.custom.item_notes.value | default: product.metafields.custom.item_notes | default: 'Stored in a personal collection.'
+  assign item_type = product.type | default: 'Figure'
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/product
-{% endcomment %}
+  if condition == blank
+    if product.tags contains 'condition_opened'
+      assign condition = 'Like New'
+    elsif product.tags contains 'condition_used'
+      assign condition = 'Good'
+    else
+      assign condition = 'New'
+    endif
+  endif
 
-<div class="product-images">
-  {% for image in product.images %}
-    {% render 'image', class: 'product-image', image: image %}
-  {% endfor %}
-</div>
+  assign condition_handle = condition | handleize
+%}
 
-<div class="product-info">
-  <h1>{{ product.title }}</h1>
-  <p>{{ product.price | money }}</p>
-  <p>{{ product.description }}</p>
-</div>
+<section class="sn-product-page full-width">
+  <div class="sn-product-hero">
+    <div class="sn-product-hero__inner">
+      <nav class="sn-product-breadcrumb" aria-label="Breadcrumb">
+        <a href="{{ routes.root_url }}">Home</a>
+        <span>/</span>
+        <a href="{{ routes.all_products_collection_url }}">Shop</a>
+        <span>/</span>
+        <span>{{ product.title | escape }}</span>
+      </nav>
 
-<div class="product-form">
-  {% form 'product', product %}
-    {% assign current_variant = product.selected_or_first_available_variant %}
+      <div class="sn-product-top">
+        <div class="sn-product-gallery">
+          <div class="sn-product-gallery__main">
+            {% if product.featured_image %}
+              {{ product.featured_image | image_url: width: 1100 | image_tag: loading: 'eager', alt: product.title }}
+            {% else %}
+              <img src="{{ 'sakura-product-zoro-dxf.jpg' | asset_url }}" alt="{{ product.title | escape }}" width="536" height="536" loading="eager">
+            {% endif %}
+            <span class="sn-product-badge sn-product-badge--{{ condition_handle }}">{{ condition }}</span>
+          </div>
 
-    <select name="id">
-      {% for variant in product.variants %}
-        <option
-          value="{{ variant.id }}"
-          {% if variant == current_variant %}
-            selected="selected"
-          {% endif %}
-        >
-          {{ variant.title }} - {{ variant.price | money }}
-        </option>
+          <div class="sn-product-thumbs" aria-label="Product images">
+            {% if product.images.size > 0 %}
+              {% for image in product.images limit: 4 %}
+                <a
+                  class="sn-product-thumb {% if forloop.first %}is-active{% endif %}"
+                  href="{{ image | image_url: width: 1100 }}"
+                  data-sn-product-thumb
+                >
+                  {{ image | image_url: width: 180 | image_tag: loading: 'lazy', alt: image.alt | default: product.title }}
+                </a>
+              {% endfor %}
+            {% else %}
+              {% for index in (1..4) %}
+                <span class="sn-product-thumb {% if forloop.first %}is-active{% endif %}">Image</span>
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="sn-product-info">
+          <p class="sn-product-series">{{ series }} &middot; {{ item_type }} &middot; Ships from Japan</p>
+          <h1>{{ product.title | escape }}</h1>
+          <p class="sn-product-price">{{ current_variant.price | money }}</p>
+          <p class="sn-product-stock">
+            {% if current_variant.available %}
+              In Stock{% if current_variant.inventory_management and current_variant.inventory_quantity > 0 %} &middot; {{ current_variant.inventory_quantity }} item{% if current_variant.inventory_quantity != 1 %}s{% endif %} available{% endif %}
+            {% else %}
+              Sold Out
+            {% endif %}
+          </p>
+
+          {% form 'product', product, class: 'sn-product-form' %}
+            <input type="hidden" name="id" value="{{ current_variant.id }}">
+
+            {% if product.variants.size > 1 %}
+              <label class="sn-variant-label" for="ProductVariant-{{ section.id }}">Variant</label>
+              <select id="ProductVariant-{{ section.id }}" name="id">
+                {% for variant in product.variants %}
+                  <option
+                    value="{{ variant.id }}"
+                    {% if variant == current_variant %}selected{% endif %}
+                    {% unless variant.available %}disabled{% endunless %}
+                  >
+                    {{ variant.title }} - {{ variant.price | money }}
+                  </option>
+                {% endfor %}
+              </select>
+            {% endif %}
+
+            <label class="sn-quantity-label" for="Quantity-{{ section.id }}">Quantity</label>
+            <div class="sn-quantity-selector">
+              <button type="button" data-sn-quantity-minus aria-label="Decrease quantity">-</button>
+              <input id="Quantity-{{ section.id }}" name="quantity" type="number" min="1" value="1" inputmode="numeric">
+              <button type="button" data-sn-quantity-plus aria-label="Increase quantity">+</button>
+            </div>
+
+            <button class="sn-add-to-cart" type="submit" {% unless current_variant.available %}disabled{% endunless %}>
+              {% if current_variant.available %}Add to Cart{% else %}Sold Out{% endif %}
+            </button>
+
+            <div class="sn-buy-now">
+              {{ form | payment_button }}
+            </div>
+          {% endform %}
+
+          <div class="sn-trust-notes">
+            <p>100% Authentic</p>
+            <p>Ships from Japan</p>
+            <p>Secure Payment</p>
+            <span>Import duties may apply depending on your country.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="sn-product-details">
+    <div class="sn-product-details__intro">
+      <p class="sn-eyebrow">Product details</p>
+      <h2>Condition & item information</h2>
+      <p>Official Japanese anime collectible sourced from a personal collection in Japan. Please review all photos and condition details before purchasing.</p>
+    </div>
+
+    <dl class="sn-spec-card">
+      <div><dt>Series</dt><dd>{{ series }}</dd></div>
+      <div><dt>Character</dt><dd>{{ character }}</dd></div>
+      <div><dt>Item Type</dt><dd>{{ item_type }}</dd></div>
+      <div><dt>Condition</dt><dd>{{ condition }}</dd></div>
+      <div><dt>Region</dt><dd>{{ release_region }}</dd></div>
+      <div><dt>Notes</dt><dd>{{ item_notes }}</dd></div>
+    </dl>
+
+    <div class="sn-description-card">
+      <h3>Description template</h3>
+      {% if product.description != blank %}
+        <div class="sn-rte">{{ product.description }}</div>
+      {% else %}
+        <p>Official Japanese collectible.</p>
+        <p>Condition: {{ condition }}</p>
+        <p>Notes: {{ item_notes }}</p>
+        <p>Shipping: Ships from Japan.</p>
+      {% endif %}
+    </div>
+
+    <div class="sn-shipping-card">
+      <h3>Shipping & customs</h3>
+      <p>Items are shipped from Japan. Tracking availability and delivery time depend on destination country. Import duties, taxes, and customs fees may be charged by your country and are the buyer's responsibility.</p>
+    </div>
+  </section>
+
+  <section class="sn-reviews">
+    <div class="sn-reviews__inner">
+      <p class="sn-eyebrow">Customer reviews</p>
+      <h2>Customer Reviews</h2>
+      <p class="sn-reviews__lead">Reviews from verified customers who purchased anime collectibles from Sakura Nexus.</p>
+
+      <div class="sn-review-summary">
+        <div>
+          <strong>4.8</strong>
+          <span>★★★★☆</span>
+          <p>Based on 24 reviews</p>
+        </div>
+        <em>100% Verified Purchases</em>
+      </div>
+
+      <article class="sn-review-card sn-review-card--wide">
+        <header>
+          <div>
+            <h3>Collector_JP</h3>
+            <p>Verified Purchase</p>
+          </div>
+          <time datetime="2024-05-15">2024-05-15</time>
+        </header>
+        <div class="sn-review-card__rating">
+          <span>★★★★★</span>
+          <strong>Excellent Quality and Detail</strong>
+        </div>
+        <p>The item was carefully packed and arrived in great condition. The paint quality and details were even better than expected.</p>
+      </article>
+
+      <div class="sn-review-grid">
+        <article class="sn-review-card">
+          <header>
+            <div>
+              <h3>AnimeEnthusiast</h3>
+              <p>Verified Purchase</p>
+            </div>
+            <time datetime="2024-05-10">2024-05-10</time>
+          </header>
+          <div class="sn-review-card__rating">
+            <span>★★★★☆</span>
+            <strong>Great Figure, Minor Paint Issues</strong>
+          </div>
+          <p>Beautiful figure overall. There were some minor imperfections, but nothing major for a collectible item.</p>
+        </article>
+
+        <article class="sn-review-card">
+          <header>
+            <div>
+              <h3>ZoroFan</h3>
+              <p>Verified Purchase</p>
+            </div>
+            <time datetime="2024-04-28">2024-04-28</time>
+          </header>
+          <div class="sn-review-card__rating">
+            <span>★★★★★</span>
+            <strong>Perfect Representation</strong>
+          </div>
+          <p>The packaging was secure and the product matched the photos. Worth every yen for Zoro collectors.</p>
+        </article>
+      </div>
+
+      <a class="sn-review-link" href="#reviews">View All Reviews</a>
+    </div>
+  </section>
+
+  <section class="sn-related">
+    <div class="sn-related__heading">
+      <div>
+        <p class="sn-eyebrow">Related items</p>
+        <h2>You may also like</h2>
+      </div>
+      <a href="{{ routes.all_products_collection_url }}">View All &rarr;</a>
+    </div>
+
+    <div class="sn-related-grid">
+      {% assign related_count = 0 %}
+      {% for related_product in collections.all.products limit: 8 %}
+        {% if related_product.id != product.id and related_count < 4 %}
+          {% assign related_count = related_count | plus: 1 %}
+          <article class="sn-related-card">
+            <a class="sn-related-card__image" href="{{ related_product.url }}">
+              {% if related_product.featured_image %}
+                {{ related_product.featured_image | image_url: width: 520 | image_tag: loading: 'lazy', alt: related_product.title }}
+              {% else %}
+                {{ 'product-1' | placeholder_svg_tag }}
+              {% endif %}
+            </a>
+            <h3><a href="{{ related_product.url }}">{{ related_product.title | escape }}</a></h3>
+            <p class="sn-related-card__price">{{ related_product.price | money }}</p>
+            <p class="sn-related-card__stock">{% if related_product.available %}In Stock{% else %}Sold Out{% endif %}</p>
+            <a class="sn-card-button" href="{{ related_product.url }}">View Details</a>
+          </article>
+        {% endif %}
       {% endfor %}
-    </select>
 
-    <input type="text" name="quantity" min="1" value="1">
+      {% if related_count == 0 %}
+        {% render 'sn-related-placeholder', asset_name: 'sakura-product-card-set.jpg', badge: 'Good', title: 'ONE PIECE Card Set SP', price: '$36.00' %}
+        {% render 'sn-related-placeholder', asset_name: 'sakura-product-nami-badge.jpg', badge: 'Very Good', title: 'Nami Pin Badge Collection', price: '$14.00' %}
+        {% render 'sn-related-placeholder', asset_name: 'sakura-product-luffy-acrylic.jpg', badge: 'Like New', title: 'Luffy Acrylic Stand Set', price: '$22.00' %}
+        {% render 'sn-related-placeholder', asset_name: 'sakura-feature-nami-dxf.jpg', badge: 'New', title: 'Nami DXF Figure Vol.3', price: '$42.00' %}
+      {% endif %}
+    </div>
+  </section>
 
-    <input type="submit" value="Add to cart">
-    {{ form | payment_button }}
-  {% endform %}
-</div>
+  <section class="sn-product-faq">
+    <h2>Questions before ordering?</h2>
+    <p>Learn about authenticity, shipping, customs, and payment methods.</p>
+    <a href="/pages/faq">View FAQ</a>
+  </section>
+</section>
+
+{% stylesheet %}
+  .sn-product-page {
+    --sn-pink: #e8a1bf;
+    --sn-pink-soft: #fff5f7;
+    --sn-pink-strong: #d67da6;
+    --sn-ink: #1f1f1f;
+    --sn-muted: #6b7380;
+    --sn-body: #384052;
+    --sn-line: #e5e8eb;
+    --sn-cream: #faf7f2;
+    font-family: var(--font-primary--family);
+    color: var(--sn-ink);
+    background: #fff;
+  }
+
+  .sn-product-page a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .sn-product-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--sn-cream);
+  }
+
+  .sn-product-hero::after {
+    content: '';
+    position: absolute;
+    top: -14px;
+    right: -20px;
+    width: 280px;
+    height: 280px;
+    border-radius: 999px;
+    background: rgba(232, 161, 191, 0.16);
+  }
+
+  .sn-product-hero__inner {
+    position: relative;
+    z-index: 1;
+    width: calc(100% - 400px);
+    margin: 0 auto;
+    padding: 32px 0 60px;
+  }
+
+  .sn-product-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    color: var(--sn-muted);
+    font-size: 13px;
+  }
+
+  .sn-product-top {
+    display: grid;
+    grid-template-columns: minmax(0, 536px) minmax(0, 566px);
+    gap: 34px;
+    margin-top: 26px;
+  }
+
+  .sn-product-gallery__main {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+    padding: 20px;
+    border: 1px solid var(--sn-line);
+    border-radius: 24px;
+    background: #fff;
+  }
+
+  .sn-product-gallery__main img,
+  .sn-product-gallery__main svg {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+  }
+
+  .sn-product-badge {
+    position: absolute;
+    top: 36px;
+    left: 36px;
+    min-height: 25px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    border-radius: 6px;
+    background: var(--sn-pink);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .sn-product-badge--like-new,
+  .sn-product-badge--opened {
+    background: #f4c7d9;
+    color: #7a294d;
+  }
+
+  .sn-product-badge--good,
+  .sn-product-badge--used {
+    background: #7c9f32;
+    color: #fff;
+  }
+
+  .sn-product-badge--very-good {
+    background: #cee8ce;
+    color: #215a21;
+  }
+
+  .sn-product-thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .sn-product-thumb {
+    width: 92px;
+    height: 92px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid var(--sn-line);
+    border-radius: 12px;
+    background: #fff;
+    color: var(--sn-muted);
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .sn-product-thumb.is-active {
+    border-color: var(--sn-pink);
+  }
+
+  .sn-product-thumb img {
+    width: 76px;
+    height: 76px;
+    border-radius: 10px;
+    object-fit: cover;
+  }
+
+  .sn-product-info {
+    padding: 18px;
+    border: 1px solid var(--sn-line);
+    border-radius: 12px;
+    background: #fff;
+  }
+
+  .sn-product-series,
+  .sn-eyebrow {
+    color: var(--sn-pink-strong);
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .sn-product-info h1 {
+    max-width: 500px;
+    margin-top: 16px;
+    font-size: 38px;
+    line-height: 1.14;
+    font-weight: 800;
+  }
+
+  .sn-product-price {
+    margin-top: 48px;
+    font-size: 34px;
+    line-height: 1.2;
+    font-weight: 800;
+  }
+
+  .sn-product-stock {
+    margin-top: 6px;
+    color: #6b8f24;
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  .sn-product-form {
+    margin-top: 44px;
+  }
+
+  .sn-variant-label,
+  .sn-quantity-label {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--sn-body);
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .sn-product-form select {
+    width: 100%;
+    min-height: 44px;
+    margin-bottom: 18px;
+    border: 1px solid var(--sn-line);
+    border-radius: 12px;
+    background: #fff;
+  }
+
+  .sn-quantity-selector {
+    width: 132px;
+    height: 44px;
+    display: grid;
+    grid-template-columns: 40px 52px 40px;
+    overflow: hidden;
+    border: 1px solid var(--sn-line);
+    border-radius: 12px;
+    background: #fff;
+  }
+
+  .sn-quantity-selector button,
+  .sn-quantity-selector input {
+    border: 0;
+    background: transparent;
+    color: var(--sn-ink);
+    font: inherit;
+    font-weight: 800;
+    text-align: center;
+  }
+
+  .sn-quantity-selector input::-webkit-outer-spin-button,
+  .sn-quantity-selector input::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
+  }
+
+  .sn-add-to-cart {
+    width: 100%;
+    min-height: 54px;
+    margin-top: 24px;
+    border: 1px solid var(--sn-pink);
+    border-radius: 6px;
+    background: var(--sn-pink);
+    color: #fff;
+    font-family: inherit;
+    font-size: 20px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .sn-add-to-cart:disabled {
+    border-color: #d1d5db;
+    background: #d1d5db;
+    cursor: not-allowed;
+  }
+
+  .sn-buy-now {
+    margin-top: 14px;
+  }
+
+  .sn-buy-now .shopify-payment-button__button {
+    min-height: 54px;
+    border: 1px solid var(--sn-pink) !important;
+    border-radius: 6px !important;
+    background: #fff !important;
+    color: var(--sn-pink) !important;
+    font-size: 20px !important;
+    font-weight: 800 !important;
+  }
+
+  .sn-trust-notes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px 20px;
+    margin-top: 28px;
+    padding: 18px 20px;
+    border: 1px solid var(--sn-line);
+    border-radius: 6px;
+    background: var(--sn-pink-soft);
+  }
+
+  .sn-trust-notes p {
+    color: var(--sn-body);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .sn-trust-notes p::before {
+    content: '\2713';
+    margin-right: 8px;
+  }
+
+  .sn-trust-notes span {
+    grid-column: 1 / -1;
+    color: var(--sn-muted);
+    font-size: 12px;
+  }
+
+  .sn-product-details {
+    width: calc(100% - 400px);
+    margin: 0 auto;
+    padding: 56px 0 72px;
+    display: grid;
+    grid-template-columns: minmax(0, 560px) minmax(0, 488px);
+    gap: 42px 88px;
+  }
+
+  .sn-product-details__intro h2 {
+    margin-top: 12px;
+    font-size: 30px;
+    line-height: 1.2;
+  }
+
+  .sn-product-details__intro p:not(.sn-eyebrow) {
+    margin-top: 14px;
+    color: var(--sn-body);
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .sn-spec-card {
+    display: grid;
+    gap: 0;
+    padding: 24px;
+    border: 1px solid var(--sn-line);
+    border-radius: 6px;
+    background: #fff;
+  }
+
+  .sn-spec-card div {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 12px;
+    padding: 10px 0;
+    font-size: 13px;
+  }
+
+  .sn-spec-card dt {
+    color: var(--sn-muted);
+    font-weight: 600;
+  }
+
+  .sn-spec-card dd {
+    font-weight: 800;
+  }
+
+  .sn-description-card,
+  .sn-shipping-card {
+    padding: 24px;
+    border: 1px solid var(--sn-line);
+    border-radius: 6px;
+    background: var(--sn-pink-soft);
+  }
+
+  .sn-description-card {
+    min-height: 300px;
+  }
+
+  .sn-shipping-card {
+    align-self: end;
+    min-height: 156px;
+  }
+
+  .sn-description-card h3,
+  .sn-shipping-card h3 {
+    font-size: 18px;
+  }
+
+  .sn-description-card p,
+  .sn-shipping-card p,
+  .sn-rte {
+    margin-top: 14px;
+    color: var(--sn-body);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .sn-reviews {
+    background: var(--sn-cream);
+  }
+
+  .sn-reviews__inner {
+    width: calc(100% - 400px);
+    margin: 0 auto;
+    padding: 88px 0 76px;
+  }
+
+  .sn-reviews h2 {
+    margin-top: 10px;
+    font-size: 32px;
+  }
+
+  .sn-reviews__lead {
+    margin-top: 10px;
+    color: var(--sn-body);
+    font-size: 14px;
+  }
+
+  .sn-review-summary {
+    min-height: 163px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: 32px;
+    padding: 28px 32px;
+    border: 1px solid var(--sn-line);
+    border-radius: 6px;
+    background: var(--sn-pink-soft);
+  }
+
+  .sn-review-summary strong {
+    display: block;
+    color: var(--sn-pink);
+    font-size: 38px;
+  }
+
+  .sn-review-summary span {
+    display: block;
+    margin-top: 4px;
+    color: var(--sn-pink);
+    font-size: 18px;
+    font-weight: 800;
+  }
+
+  .sn-review-summary p {
+    margin-top: 8px;
+    color: var(--sn-body);
+    font-size: 13px;
+  }
+
+  .sn-review-summary em {
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 28px;
+    border: 1px solid var(--sn-line);
+    border-radius: 6px;
+    background: #fff;
+    color: #6b8f24;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 800;
+  }
+
+  .sn-review-card {
+    padding: 24px;
+    border: 1px solid var(--sn-line);
+    border-radius: 6px;
+    background: #fff;
+  }
+
+  .sn-review-card--wide {
+    margin-top: 36px;
+  }
+
+  .sn-review-card header {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .sn-review-card h3 {
+    font-size: 15px;
+  }
+
+  .sn-review-card header p {
+    margin-top: 4px;
+    color: #6b8f24;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .sn-review-card time {
+    color: var(--sn-muted);
+    font-size: 12px;
+  }
+
+  .sn-review-card__rating {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .sn-review-card__rating span {
+    color: var(--sn-pink);
+    font-size: 18px;
+    font-weight: 800;
+  }
+
+  .sn-review-card__rating strong {
+    font-size: 16px;
+  }
+
+  .sn-review-card > p {
+    margin-top: 12px;
+    color: var(--sn-body);
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .sn-review-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 40px;
+    margin-top: 36px;
+  }
+
+  .sn-review-link {
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 180px;
+    margin: 36px auto 0;
+    border: 1px solid var(--sn-pink);
+    border-radius: 6px;
+    color: var(--sn-pink);
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .sn-related {
+    padding: 64px 0 54px;
+    background: #fff;
+  }
+
+  .sn-related__heading,
+  .sn-related-grid {
+    width: calc(100% - 400px);
+    margin: 0 auto;
+  }
+
+  .sn-related__heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .sn-related__heading h2 {
+    margin-top: 12px;
+    font-size: 30px;
+  }
+
+  .sn-related__heading > a {
+    color: var(--sn-pink-strong);
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .sn-related-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 26px;
+    margin-top: 34px;
+  }
+
+  .sn-related-card {
+    overflow: hidden;
+    border: 1px solid var(--sn-line);
+    border-radius: 6px;
+    background: #fff;
+  }
+
+  .sn-related-card__image {
+    position: relative;
+    height: 210px;
+    display: block;
+    overflow: hidden;
+    background: #f4f4f5;
+  }
+
+  .sn-related-card__image img,
+  .sn-related-card__image svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .sn-related-card h3 {
+    min-height: 38px;
+    margin: 18px 18px 0;
+    font-size: 14px;
+    line-height: 1.35;
+  }
+
+  .sn-related-card__price {
+    margin: 12px 18px 0;
+    font-size: 20px;
+    font-weight: 800;
+  }
+
+  .sn-related-card__stock {
+    margin: 4px 18px 0;
+    color: #6b7280;
+    font-size: 12px;
+  }
+
+  .sn-related-card .sn-card-button {
+    width: calc(100% - 36px);
+    margin: 42px 18px 20px;
+  }
+
+  .sn-card-button {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--sn-pink);
+    border-radius: 6px;
+    color: var(--sn-pink);
+    font-size: 14px;
+    font-weight: 800;
+    box-shadow: 0 4px 4px rgba(232, 160, 191, 0.18);
+  }
+
+  .sn-product-faq {
+    padding: 58px 20px 54px;
+    background: var(--sn-cream);
+    text-align: center;
+  }
+
+  .sn-product-faq h2 {
+    font-size: 28px;
+  }
+
+  .sn-product-faq p {
+    margin-top: 10px;
+    color: var(--sn-body);
+    font-size: 14px;
+  }
+
+  .sn-product-faq a {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    padding: 0 30px;
+    border-radius: 6px;
+    background: var(--sn-pink);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  @media (max-width: 1180px) {
+    .sn-product-hero__inner,
+    .sn-product-details,
+    .sn-reviews__inner,
+    .sn-related__heading,
+    .sn-related-grid {
+      width: calc(100% - 64px);
+    }
+
+    .sn-product-top,
+    .sn-product-details {
+      grid-template-columns: 1fr;
+    }
+
+    .sn-product-gallery {
+      max-width: 620px;
+    }
+
+    .sn-shipping-card {
+      align-self: stretch;
+    }
+
+    .sn-related-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 720px) {
+    .sn-product-hero__inner,
+    .sn-product-details,
+    .sn-reviews__inner,
+    .sn-related__heading,
+    .sn-related-grid {
+      width: calc(100% - 40px);
+    }
+
+    .sn-product-info h1 {
+      font-size: 32px;
+    }
+
+    .sn-product-price {
+      margin-top: 28px;
+    }
+
+    .sn-trust-notes,
+    .sn-review-grid,
+    .sn-related-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .sn-review-summary,
+    .sn-related__heading {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .sn-review-card__rating {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sn-spec-card div {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  const quantityInput = document.querySelector('.sn-quantity-selector input');
+  const minusButton = document.querySelector('[data-sn-quantity-minus]');
+  const plusButton = document.querySelector('[data-sn-quantity-plus]');
+  const mainImage = document.querySelector('.sn-product-gallery__main img');
+  const thumbs = document.querySelectorAll('[data-sn-product-thumb]');
+
+  if (quantityInput && minusButton && plusButton) {
+    minusButton.addEventListener('click', () => {
+      const value = Math.max(1, Number(quantityInput.value || 1) - 1);
+      quantityInput.value = String(value);
+    });
+
+    plusButton.addEventListener('click', () => {
+      quantityInput.value = String(Number(quantityInput.value || 1) + 1);
+    });
+  }
+
+  if (mainImage && thumbs.length) {
+    thumbs.forEach((thumb) => {
+      thumb.addEventListener('click', (event) => {
+        event.preventDefault();
+        mainImage.src = thumb.href;
+        thumbs.forEach((item) => item.classList.remove('is-active'));
+        thumb.classList.add('is-active');
+      });
+    });
+  }
+{% endjavascript %}
 
 {% schema %}
 {
