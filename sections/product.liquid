@@ -16,8 +16,6 @@
       assign condition = 'New'
     endif
   endif
-
-  assign condition_handle = condition | handleize
 %}
 
 <section class="sn-product-page full-width">
@@ -39,7 +37,7 @@
             {% else %}
               <img src="{{ 'sakura-product-zoro-dxf.jpg' | asset_url }}" alt="{{ product.title | escape }}" width="536" height="536" loading="eager">
             {% endif %}
-            <span class="sn-product-badge sn-product-badge--{{ condition_handle }}">{{ condition }}</span>
+            {% render 'sn-condition-badge', product: product, class: 'sn-product-badge' %}
           </div>
 
           <div class="sn-product-thumbs" aria-label="Product images">
@@ -232,19 +230,15 @@
       {% for related_product in collections.all.products limit: 8 %}
         {% if related_product.id != product.id and related_count < 4 %}
           {% assign related_count = related_count | plus: 1 %}
-          <article class="sn-related-card">
-            <a class="sn-related-card__image" href="{{ related_product.url }}">
-              {% if related_product.featured_image %}
-                {{ related_product.featured_image | image_url: width: 520 | image_tag: loading: 'lazy', alt: related_product.title }}
-              {% else %}
-                {{ 'product-1' | placeholder_svg_tag }}
-              {% endif %}
-            </a>
-            <h3><a href="{{ related_product.url }}">{{ related_product.title | escape }}</a></h3>
-            <p class="sn-related-card__price">{{ related_product.price | money }}</p>
-            <p class="sn-related-card__stock">{% if related_product.available %}In Stock{% else %}Sold Out{% endif %}</p>
-            <a class="sn-card-button" href="{{ related_product.url }}">View Details</a>
-          </article>
+          {% render 'sn-product-card',
+            product: related_product,
+            card_class: 'sn-related-card',
+            image_class: 'sn-related-card__image',
+            price_class: 'sn-related-card__price',
+            stock_class: 'sn-related-card__stock',
+            image_width: 520,
+            show_badge: false
+          %}
         {% endif %}
       {% endfor %}
 
@@ -257,11 +251,13 @@
     </div>
   </section>
 
-  <section class="sn-product-faq">
-    <h2>Questions before ordering?</h2>
-    <p>Learn about authenticity, shipping, customs, and payment methods.</p>
-    <a href="/pages/faq">View FAQ</a>
-  </section>
+  {% render 'sn-faq-cta',
+    class: 'sn-product-faq',
+    heading: 'Questions before ordering?',
+    text: 'Learn about authenticity, shipping, customs, and payment methods.',
+    url: '/pages/faq',
+    label: 'View FAQ'
+  %}
 </section>
 
 {% stylesheet %}

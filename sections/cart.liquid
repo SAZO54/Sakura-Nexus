@@ -151,19 +151,15 @@
       {% for related_product in collections.all.products limit: 8 %}
         {% if related_count < 4 %}
           {% assign related_count = related_count | plus: 1 %}
-          <article class="sn-cart-related-card">
-            <a class="sn-cart-related-card__image" href="{{ related_product.url }}">
-              {% if related_product.featured_image %}
-                {{ related_product.featured_image | image_url: width: 520 | image_tag: loading: 'lazy', alt: related_product.title }}
-              {% else %}
-                {{ 'product-1' | placeholder_svg_tag }}
-              {% endif %}
-            </a>
-            <h3><a href="{{ related_product.url }}">{{ related_product.title | escape }}</a></h3>
-            <p class="sn-cart-related-card__price">{{ related_product.price | money }}</p>
-            <p class="sn-cart-related-card__stock">{% if related_product.available %}In Stock{% else %}Sold Out{% endif %}</p>
-            <a class="sn-card-button" href="{{ related_product.url }}">View Details</a>
-          </article>
+          {% render 'sn-product-card',
+            product: related_product,
+            card_class: 'sn-cart-related-card',
+            image_class: 'sn-cart-related-card__image',
+            price_class: 'sn-cart-related-card__price',
+            stock_class: 'sn-cart-related-card__stock',
+            image_width: 520,
+            show_badge: false
+          %}
         {% endif %}
       {% endfor %}
 
@@ -176,11 +172,13 @@
     </div>
   </section>
 
-  <section class="sn-cart-faq">
-    <h2>Questions before ordering?</h2>
-    <p>Learn about authenticity, shipping, customs, and payment methods.</p>
-    <a href="/pages/faq">View FAQ</a>
-  </section>
+  {% render 'sn-faq-cta',
+    class: 'sn-cart-faq',
+    heading: 'Questions before ordering?',
+    text: 'Learn about authenticity, shipping, customs, and payment methods.',
+    url: '/pages/faq',
+    label: 'View FAQ'
+  %}
 </section>
 
 {% stylesheet %}

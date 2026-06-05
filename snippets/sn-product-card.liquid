@@ -1,0 +1,119 @@
+{% doc %}
+  Renders a reusable Sakura Nexus product card.
+
+  @param {product} product - Product to render
+  @param {collection} [collection] - Optional collection context for product URLs
+  @param {string} [card_class] - CSS class for the article element
+  @param {string} [image_class] - CSS class for the image link
+  @param {string} [price_class] - CSS class for the price element
+  @param {string} [stock_class] - CSS class for the stock element
+  @param {string} [badge_class] - CSS class for the condition badge
+  @param {number} [image_width] - Requested image width
+  @param {string} [button_label] - CTA label
+  @param {boolean} [show_badge] - Whether to render a condition badge
+
+  @example
+  {% render 'sn-product-card', product: product, collection: collection %}
+{% enddoc %}
+
+{% liquid
+  assign card_class = card_class | default: 'sn-product-card'
+  if image_class == blank
+    assign image_class = card_class | append: '__image'
+  endif
+  if price_class == blank
+    assign price_class = card_class | append: '__price'
+  endif
+  if stock_class == blank
+    assign stock_class = card_class | append: '__stock'
+  endif
+  assign badge_class = badge_class | default: 'sn-condition-badge'
+  assign image_width = image_width | default: 544
+  assign button_label = button_label | default: 'View Details'
+
+  if collection
+    assign product_url = product.url | within: collection
+  else
+    assign product_url = product.url
+  endif
+%}
+
+<article class="{{ card_class }}">
+  <a class="{{ image_class }}" href="{{ product_url }}">
+    {% if product.featured_image %}
+      {{ product.featured_image | image_url: width: image_width | image_tag: loading: 'lazy', alt: product.featured_image.alt | default: product.title }}
+    {% else %}
+      {{ 'product-1' | placeholder_svg_tag }}
+    {% endif %}
+
+    {% unless show_badge == false %}
+      {% render 'sn-condition-badge', product: product, class: badge_class %}
+    {% endunless %}
+  </a>
+
+  <h3><a href="{{ product_url }}">{{ product.title | escape }}</a></h3>
+  <p class="{{ price_class }}">{{ product.price | money }}</p>
+  <p class="{{ stock_class }}">
+    {% if product.available %}
+      In Stock
+    {% else %}
+      Sold Out
+    {% endif %}
+  </p>
+  <a class="sn-card-button" href="{{ product_url }}">{{ button_label }}</a>
+</article>
+
+{% stylesheet %}
+  .sn-product-card {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--sn-line, #e5e7eb);
+    border-radius: 6px;
+    background: #fff;
+  }
+
+  .sn-product-card__image {
+    position: relative;
+    height: 210px;
+    display: block;
+    overflow: hidden;
+    background: #f4f4f5;
+  }
+
+  .sn-product-card__image img,
+  .sn-product-card__image svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .sn-product-card h3 {
+    margin: 18px 18px 0;
+    min-height: 40px;
+    font-size: 14px;
+    line-height: 1.35;
+    font-weight: 700;
+  }
+
+  .sn-product-card h3 a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .sn-product-card__price {
+    margin: 12px 18px 0;
+    font-size: 20px;
+    font-weight: 800;
+  }
+
+  .sn-product-card__stock {
+    margin: 4px 18px 0;
+    color: var(--sn-muted, #6b7280);
+    font-size: 12px;
+  }
+
+  .sn-product-card .sn-card-button {
+    width: calc(100% - 36px);
+    margin: 42px 18px 20px;
+  }
+{% endstylesheet %}

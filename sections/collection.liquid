@@ -147,48 +147,16 @@
         {% if collection.products.size > 0 %}
           <div class="sn-collection-grid">
             {% for product in collection.products %}
-              {% liquid
-                assign condition = product.metafields.custom.condition.value | default: product.metafields.custom.condition
-                assign condition_label = condition | default: 'New'
-                assign condition_handle = condition_label | handleize
-
-                if condition == blank
-                  if product.tags contains 'condition_opened'
-                    assign condition_label = 'Like New'
-                    assign condition_handle = 'opened'
-                  elsif product.tags contains 'condition_used'
-                    assign condition_label = 'Good'
-                    assign condition_handle = 'used'
-                  else
-                    assign condition_label = 'New'
-                    assign condition_handle = 'new'
-                  endif
-                endif
+              {% render 'sn-product-card',
+                product: product,
+                collection: collection,
+                card_class: 'sn-listing-card',
+                image_class: 'sn-listing-card__image',
+                price_class: 'sn-listing-card__price',
+                stock_class: 'sn-listing-card__stock',
+                badge_class: 'sn-condition-badge',
+                image_width: 640
               %}
-
-              <article class="sn-listing-card">
-                <a class="sn-listing-card__image" href="{{ product.url | within: collection }}">
-                  {% if product.featured_image %}
-                    {{ product.featured_image | image_url: width: 640 | image_tag: loading: 'lazy', alt: product.featured_image.alt | default: product.title }}
-                  {% else %}
-                    {{ 'product-1' | placeholder_svg_tag }}
-                  {% endif %}
-                  <span class="sn-condition-badge sn-condition-badge--{{ condition_handle }}">{{ condition_label }}</span>
-                </a>
-
-                <div class="sn-listing-card__body">
-                  <h2><a href="{{ product.url | within: collection }}">{{ product.title | escape }}</a></h2>
-                  <p class="sn-listing-card__price">{{ product.price | money }}</p>
-                  <p class="sn-listing-card__stock">
-                    {% if product.available %}
-                      In Stock
-                    {% else %}
-                      Sold Out
-                    {% endif %}
-                  </p>
-                  <a class="sn-card-button" href="{{ product.url | within: collection }}">View Details</a>
-                </div>
-              </article>
             {% endfor %}
           </div>
         {% else %}
@@ -208,11 +176,13 @@
     </div>
   {% endpaginate %}
 
-  <section class="sn-collection-faq">
-    <h2>Questions before ordering?</h2>
-    <p>Learn about authenticity, shipping, customs, and payment methods.</p>
-    <a href="/pages/faq">View FAQ</a>
-  </section>
+  {% render 'sn-faq-cta',
+    class: 'sn-collection-faq',
+    heading: 'Questions before ordering?',
+    text: 'Learn about authenticity, shipping, customs, and payment methods.',
+    url: '/pages/faq',
+    label: 'View FAQ'
+  %}
 </section>
 
 {% stylesheet %}
@@ -497,33 +467,39 @@
     padding: 18px 18px 20px;
   }
 
-  .sn-listing-card h2 {
+  .sn-listing-card h3 {
     min-height: 38px;
+    margin: 18px 18px 0;
     font-size: 14px;
     line-height: 1.35;
     font-weight: 700;
   }
 
+  .sn-listing-card h3 a {
+    color: inherit;
+    text-decoration: none;
+  }
+
   .sn-listing-card__price {
-    margin-top: 12px;
+    margin: 12px 18px 0;
     font-size: 20px;
     line-height: 1.2;
     font-weight: 800;
   }
 
   .sn-listing-card__stock {
-    margin-top: 4px;
+    margin: 4px 18px 0;
     color: #6b7280;
     font-size: 12px;
   }
 
   .sn-card-button {
-    width: 100%;
+    width: calc(100% - 36px);
     min-height: 48px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-top: 42px;
+    margin: 42px 18px 20px;
     border: 2px solid var(--sn-pink);
     border-radius: 6px;
     color: var(--sn-pink);

@@ -1,0 +1,232 @@
+<section class="sn-collections full-width">
+  {% render 'sn-section-heading',
+    eyebrow: section.settings.eyebrow,
+    heading: section.settings.heading
+  %}
+
+  <div class="sn-collection-grid">
+    {% for block in section.blocks %}
+      <a class="sn-collection-card" href="{{ block.settings.url }}" {{ block.shopify_attributes }}>
+        {% if block.settings.image %}
+          {{ block.settings.image | image_url: width: 520 | image_tag: loading: 'lazy', alt: block.settings.image.alt | default: block.settings.title }}
+        {% elsif block.settings.asset_name != blank %}
+          <img src="{{ block.settings.asset_name | asset_url }}" alt="" width="205" height="160" loading="lazy">
+        {% endif %}
+        <strong>{{ block.settings.title }}</strong>
+        {% if block.settings.text != blank %}
+          <span>{{ block.settings.text }}</span>
+        {% endif %}
+        <b aria-hidden="true">-&gt;</b>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+
+{% stylesheet %}
+  .sn-collections {
+    --sn-pink: #e8a0bf;
+    --sn-pink-strong: #d67ca7;
+    --sn-ink: #1f1f1f;
+    --sn-muted: #6b7280;
+    --sn-line: #e5e7eb;
+    --sn-content-width: 1280px;
+    padding-block: 74px 82px;
+    background: #fff;
+    color: var(--sn-ink);
+    font-family: var(--font-primary--family);
+  }
+
+  .sn-collections a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .sn-collection-grid {
+    width: min(calc(100% - 40px), var(--sn-content-width));
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .sn-collection-card {
+    position: relative;
+    min-height: 160px;
+    overflow: hidden;
+    padding: 42px 18px 18px;
+    border: 1px solid var(--sn-line);
+    border-radius: 8px;
+    background: #fff5f8;
+  }
+
+  .sn-collection-card img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.9;
+  }
+
+  .sn-collection-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(255, 245, 248, 0.96), rgba(255, 245, 248, 0.72) 52%, rgba(255, 245, 248, 0.14));
+  }
+
+  .sn-collection-card strong,
+  .sn-collection-card span,
+  .sn-collection-card b {
+    position: relative;
+    z-index: 1;
+    display: block;
+  }
+
+  .sn-collection-card strong {
+    font-size: 15px;
+  }
+
+  .sn-collection-card span {
+    margin-top: 12px;
+    color: var(--sn-muted);
+    font-size: 12px;
+  }
+
+  .sn-collection-card b {
+    position: absolute;
+    right: 20px;
+    bottom: 24px;
+    color: var(--sn-pink);
+    font-size: 16px;
+  }
+
+  @media (max-width: 1100px) {
+    .sn-collection-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 720px) {
+    .sn-collections {
+      padding-block: 56px;
+    }
+
+    .sn-collection-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .sn-collection-card {
+      min-height: 144px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Collection links",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Browse by collection"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Shop by Series & Type"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection_link",
+      "name": "Collection link",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "ONE PIECE"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "All series goods"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "URL",
+          "default": "/collections/all"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "asset_name",
+          "label": "Fallback asset filename",
+          "default": "sakura-collection-one-piece.jpg"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection links",
+      "blocks": [
+        {
+          "type": "collection_link",
+          "settings": {
+            "title": "ONE PIECE",
+            "text": "All series goods",
+            "url": "/collections/one-piece",
+            "asset_name": "sakura-collection-one-piece.jpg"
+          }
+        },
+        {
+          "type": "collection_link",
+          "settings": {
+            "title": "Zoro Collection",
+            "text": "Fan favourite",
+            "url": "/collections/zoro-collection",
+            "asset_name": "sakura-collection-zoro.jpg"
+          }
+        },
+        {
+          "type": "collection_link",
+          "settings": {
+            "title": "Figures",
+            "text": "Scale & prize figs",
+            "url": "/collections/figures",
+            "asset_name": "sakura-collection-figures.jpg"
+          }
+        },
+        {
+          "type": "collection_link",
+          "settings": {
+            "title": "Acrylic Stands",
+            "text": "Desktop decor",
+            "url": "/collections/acrylic-stands",
+            "asset_name": "sakura-collection-acrylic.jpg"
+          }
+        },
+        {
+          "type": "collection_link",
+          "settings": {
+            "title": "Badges & Cards",
+            "text": "Pin & card sets",
+            "url": "/collections/badges",
+            "asset_name": "sakura-collection-badges.jpg"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

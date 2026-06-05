@@ -1,0 +1,223 @@
+{% liquid
+  assign product_collection = section.settings.collection | default: collections.all
+  assign rendered_count = 0
+%}
+
+<section class="sn-product-section sn-product-section--{{ section.settings.background_style }} full-width">
+  {% render 'sn-section-heading',
+    eyebrow: section.settings.eyebrow,
+    heading: section.settings.heading,
+    link_url: section.settings.link_url,
+    link_label: section.settings.link_label
+  %}
+
+  <div class="sn-product-grid">
+    {% if product_collection.products.size > 0 %}
+      {% for product in product_collection.products limit: 50 %}
+        {% if rendered_count >= section.settings.product_limit %}
+          {% break %}
+        {% endif %}
+
+        {% if section.settings.product_source == 'featured_tag' %}
+          {% unless product.tags contains 'featured' %}
+            {% continue %}
+          {% endunless %}
+        {% endif %}
+
+        {% assign rendered_count = rendered_count | plus: 1 %}
+        {% render 'sn-product-card', product: product, image_width: 544, badge_class: 'sn-badge' %}
+      {% endfor %}
+    {% endif %}
+
+    {% if rendered_count == 0 %}
+      <div class="sn-product-empty">
+        <h3>{{ section.settings.empty_heading }}</h3>
+        <p>{{ section.settings.empty_text }}</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% stylesheet %}
+  .sn-product-section {
+    --sn-pink: #e8a0bf;
+    --sn-pink-strong: #d67ca7;
+    --sn-ink: #1f1f1f;
+    --sn-muted: #6b7280;
+    --sn-line: #e5e7eb;
+    --sn-cream: #faf7f2;
+    --sn-content-width: 1280px;
+    padding-block: 78px 82px;
+    color: var(--sn-ink);
+    font-family: var(--font-primary--family);
+  }
+
+  .sn-product-section--white {
+    background: #fff;
+  }
+
+  .sn-product-section--tint {
+    background: var(--sn-cream);
+  }
+
+  .sn-product-section a {
+    text-decoration: none;
+  }
+
+  .sn-product-grid {
+    width: min(calc(100% - 40px), var(--sn-content-width));
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .sn-product-empty {
+    grid-column: 1 / -1;
+    padding: 32px;
+    border: 1px solid var(--sn-line);
+    border-radius: 6px;
+    background: #fff;
+    text-align: center;
+  }
+
+  .sn-product-empty h3 {
+    font-size: 18px;
+    font-weight: 800;
+  }
+
+  .sn-product-empty p {
+    margin-top: 8px;
+    color: var(--sn-muted);
+    font-size: 14px;
+  }
+
+  .sn-card-button {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--sn-pink);
+    border-radius: 6px;
+    color: var(--sn-pink);
+    font-size: 14px;
+    font-weight: 800;
+    box-shadow: 0 4px 4px rgba(232, 160, 191, 0.18);
+    transition: transform 160ms ease, box-shadow 160ms ease;
+  }
+
+  .sn-card-button:hover {
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 1100px) {
+    .sn-product-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 720px) {
+    .sn-product-section {
+      padding-block: 56px;
+    }
+
+    .sn-product-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product grid",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "New arrivals"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Latest Additions"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "select",
+      "id": "product_source",
+      "label": "Product source",
+      "default": "collection",
+      "options": [
+        {
+          "value": "collection",
+          "label": "Collection products"
+        },
+        {
+          "value": "featured_tag",
+          "label": "Products tagged featured"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "product_limit",
+      "label": "Product limit",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "background_style",
+      "label": "Background",
+      "default": "white",
+      "options": [
+        {
+          "value": "white",
+          "label": "White"
+        },
+        {
+          "value": "tint",
+          "label": "Tint"
+        }
+      ]
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "Heading link URL",
+      "default": "/collections/all"
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Heading link label",
+      "default": "View All ->"
+    },
+    {
+      "type": "text",
+      "id": "empty_heading",
+      "label": "Empty heading",
+      "default": "No products found."
+    },
+    {
+      "type": "textarea",
+      "id": "empty_text",
+      "label": "Empty text",
+      "default": "Add products to the selected collection or update this section's settings."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product grid"
+    }
+  ]
+}
+{% endschema %}

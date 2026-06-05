@@ -1,0 +1,287 @@
+<section class="sn-about full-width">
+  <div class="sn-about__copy">
+    {% if section.settings.eyebrow != blank %}
+      <p class="sn-eyebrow">{{ section.settings.eyebrow }}</p>
+    {% endif %}
+    <h2>{{ section.settings.heading }}</h2>
+    {% if section.settings.text != blank %}
+      <p>{{ section.settings.text }}</p>
+    {% endif %}
+
+    <div class="sn-actions">
+      {% if section.settings.primary_url != blank %}
+        <a class="sn-button sn-button--primary" href="{{ section.settings.primary_url }}">
+          {{ section.settings.primary_label }}
+        </a>
+      {% endif %}
+      {% if section.settings.secondary_url != blank %}
+        <a class="sn-button sn-button--ghost" href="{{ section.settings.secondary_url }}">
+          {{ section.settings.secondary_label }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="sn-stats" aria-label="Sakura Nexus facts">
+    {% for block in section.blocks %}
+      <div {{ block.shopify_attributes }}>
+        <strong>{{ block.settings.value }}</strong>
+        <span>{{ block.settings.label }}</span>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% stylesheet %}
+  .sn-about {
+    --sn-pink: #e8a0bf;
+    --sn-pink-strong: #d67ca7;
+    --sn-ink: #1f1f1f;
+    --sn-muted: #6b7280;
+    --sn-line: #e5e7eb;
+    --sn-cream: #faf7f2;
+    position: relative;
+    overflow: hidden;
+    padding-block: 88px;
+    display: grid;
+    grid-template-columns: minmax(20px, 1fr) minmax(0, 616px) minmax(0, 616px) minmax(20px, 1fr);
+    gap: 48px;
+    align-items: center;
+    background: var(--sn-cream);
+    color: var(--sn-ink);
+    font-family: var(--font-primary--family);
+  }
+
+  .sn-about::after {
+    content: '';
+    position: absolute;
+    width: 360px;
+    height: 360px;
+    right: -40px;
+    bottom: -120px;
+    border-radius: 999px;
+    background: rgba(232, 160, 191, 0.13);
+    pointer-events: none;
+  }
+
+  .sn-about a {
+    text-decoration: none;
+  }
+
+  .sn-about__copy {
+    grid-column: 2;
+    position: relative;
+    z-index: 1;
+  }
+
+  .sn-about h2 {
+    margin-top: 18px;
+    font-size: 34px;
+    line-height: 1.18;
+    font-weight: 800;
+  }
+
+  .sn-about__copy > p:not(.sn-eyebrow) {
+    margin-top: 28px;
+    color: #374151;
+    font-size: 16px;
+    line-height: 1.48;
+  }
+
+  .sn-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 30px;
+  }
+
+  .sn-button {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    transition: transform 160ms ease, box-shadow 160ms ease;
+  }
+
+  .sn-button:hover {
+    transform: translateY(-1px);
+  }
+
+  .sn-button--primary {
+    min-width: 142px;
+    padding: 0 26px;
+    background: var(--sn-pink);
+    color: #fff;
+  }
+
+  .sn-button--ghost {
+    min-width: 142px;
+    padding: 0 26px;
+    background: #fff;
+    border: 2px solid var(--sn-pink);
+    color: var(--sn-pink);
+  }
+
+  .sn-stats {
+    grid-column: 3;
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .sn-stats div {
+    min-height: 120px;
+    padding: 27px 18px;
+    border: 1px solid var(--sn-line);
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  .sn-stats strong,
+  .sn-stats span {
+    display: block;
+  }
+
+  .sn-stats strong {
+    color: var(--sn-pink);
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  .sn-stats span {
+    margin-top: 16px;
+    color: var(--sn-muted);
+    font-size: 12px;
+  }
+
+  @media (max-width: 1100px) {
+    .sn-about {
+      grid-template-columns: 1fr;
+    }
+
+    .sn-about__copy,
+    .sn-stats {
+      grid-column: 1;
+      width: calc(100% - 64px);
+      margin-inline: auto;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .sn-about {
+      padding-block: 56px;
+    }
+
+    .sn-about__copy,
+    .sn-stats {
+      width: calc(100% - 40px);
+    }
+
+    .sn-stats {
+      grid-template-columns: 1fr;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "About banner",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "About Sakura Nexus"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Direct from Japan, For Anime Lovers Worldwide"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Sakura Nexus offers authentic Japanese anime collectibles sourced from personal collections in Japan. Every item is carefully inspected and shipped with care directly to you."
+    },
+    {
+      "type": "url",
+      "id": "primary_url",
+      "label": "Primary URL",
+      "default": "/collections/all"
+    },
+    {
+      "type": "text",
+      "id": "primary_label",
+      "label": "Primary label",
+      "default": "Shop Items"
+    },
+    {
+      "type": "url",
+      "id": "secondary_url",
+      "label": "Secondary URL",
+      "default": "/pages/faq"
+    },
+    {
+      "type": "text",
+      "id": "secondary_label",
+      "label": "Secondary label",
+      "default": "Read FAQ"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Stat",
+      "settings": [
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Value",
+          "default": "100%"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Authentic Goods"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "About banner",
+      "blocks": [
+        {
+          "type": "stat",
+          "settings": {
+            "value": "100%",
+            "label": "Authentic Goods"
+          }
+        },
+        {
+          "type": "stat",
+          "settings": {
+            "value": "Japan",
+            "label": "Ships From"
+          }
+        },
+        {
+          "type": "stat",
+          "settings": {
+            "value": "Worldwide",
+            "label": "Delivery"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,77 @@
+{% doc %}
+  Renders the shared Sakura Nexus FAQ call-to-action.
+
+  @param {string} heading - CTA heading
+  @param {string} text - CTA supporting text
+  @param {string} url - CTA URL
+  @param {string} label - CTA label
+  @param {string} [class] - Wrapper CSS class
+
+  @example
+  {% render 'sn-faq-cta', heading: 'Questions?', text: 'Read the FAQ.', url: '/pages/faq', label: 'View FAQ' %}
+{% enddoc %}
+
+{% liquid
+  assign cta_class = class | default: 'sn-faq-cta'
+  assign label = label | default: 'View FAQ'
+%}
+
+<section class="{{ cta_class }}">
+  {% if heading != blank %}
+    <h2>{{ heading }}</h2>
+  {% endif %}
+  {% if text != blank %}
+    <p>{{ text }}</p>
+  {% endif %}
+  {% if url != blank %}
+    <a class="sn-button sn-button--primary" href="{{ url }}">{{ label }}</a>
+  {% endif %}
+</section>
+
+{% stylesheet %}
+  .sn-faq-cta {
+    padding: 74px 20px;
+    background: #fff;
+    text-align: center;
+  }
+
+  .sn-faq-cta h2 {
+    font-size: 30px;
+    line-height: 1.2;
+  }
+
+  .sn-faq-cta p {
+    max-width: 720px;
+    margin: 14px auto 0;
+    color: var(--sn-muted, #6b7280);
+    font-size: 15px;
+  }
+
+  .sn-faq-cta .sn-button {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 26px;
+    padding: 0 30px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .sn-faq-cta .sn-button--primary {
+    background: var(--sn-pink, #e8a0bf);
+    color: #fff;
+  }
+
+  @media (max-width: 720px) {
+    .sn-faq-cta {
+      padding-block: 56px;
+    }
+
+    .sn-faq-cta h2 {
+      font-size: 26px;
+    }
+  }
+{% endstylesheet %}

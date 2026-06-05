@@ -1,0 +1,75 @@
+{% doc %}
+  Renders a Sakura Nexus section heading with an optional action link.
+
+  @param {string} eyebrow - Short uppercase label
+  @param {string} heading - Main heading text
+  @param {string} [link_url] - Optional action URL
+  @param {string} [link_label] - Optional action label
+  @param {string} [class] - Wrapper CSS class
+
+  @example
+  {% render 'sn-section-heading', eyebrow: 'Featured', heading: 'Handpicked items' %}
+{% enddoc %}
+
+{% liquid
+  assign heading_class = class | default: 'sn-section-heading'
+%}
+
+<div class="{{ heading_class }}">
+  <div>
+    {% if eyebrow != blank %}
+      <p class="sn-eyebrow">{{ eyebrow }}</p>
+    {% endif %}
+    {% if heading != blank %}
+      <h2>{{ heading }}</h2>
+    {% endif %}
+  </div>
+
+  {% if link_url != blank and link_label != blank %}
+    <a href="{{ link_url }}">{{ link_label }}</a>
+  {% endif %}
+</div>
+
+{% stylesheet %}
+  .sn-eyebrow {
+    color: var(--sn-pink-strong, #d67ca7);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .sn-section-heading {
+    width: min(calc(100% - 40px), var(--sn-content-width, 1280px));
+    margin: 0 auto 34px;
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .sn-section-heading h2 {
+    margin-top: 12px;
+    font-size: 30px;
+    line-height: 1.2;
+    font-weight: 800;
+  }
+
+  .sn-section-heading > a {
+    color: var(--sn-pink, #e8a0bf);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  @media (max-width: 720px) {
+    .sn-section-heading {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .sn-section-heading h2 {
+      font-size: 26px;
+    }
+  }
+{% endstylesheet %}
