@@ -130,10 +130,6 @@
         "worldwide"
       ],
       "settings": {}
-    },
-    "faq": {
-      "type": "faq-cta",
-      "settings": {}
     }
   },
   "order": [
@@ -142,7 +138,6 @@
     "latest_additions",
     "featured_products",
     "collection_links",
-    "about",
-    "faq"
+    "about"
   ]
 }
