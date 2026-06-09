@@ -3,13 +3,12 @@
 
   @param {product} product - Product to render
   @param {collection} [collection] - Optional collection context for product URLs
-  @param {string} [card_class] - CSS class for the article element
-  @param {string} [image_class] - CSS class for the image link
+  @param {string} [card_class] - CSS class for the card root link
+  @param {string} [image_class] - CSS class for the media element
   @param {string} [price_class] - CSS class for the price element
   @param {string} [stock_class] - CSS class for the stock element
   @param {string} [badge_class] - CSS class for the condition badge
   @param {number} [image_width] - Requested image width
-  @param {string} [button_label] - CTA label
   @param {boolean} [show_badge] - Whether to render a condition badge
 
   @example
@@ -29,7 +28,6 @@
   endif
   assign badge_class = badge_class | default: 'sn-condition-badge'
   assign image_width = image_width | default: 544
-  assign button_label = button_label | default: 'View Details'
 
   if collection
     assign product_url = product.url | within: collection
@@ -38,8 +36,8 @@
   endif
 %}
 
-<article class="{{ card_class }}">
-  <a class="{{ image_class }}" href="{{ product_url }}">
+<a class="{{ card_class }}" href="{{ product_url }}" aria-label="View details for {{ product.title | escape }}">
+  <span class="{{ image_class }}">
     {% if product.featured_image %}
       {{ product.featured_image | image_url: width: image_width | image_tag: loading: 'lazy', alt: product.featured_image.alt | default: product.title }}
     {% else %}
@@ -49,9 +47,9 @@
     {% unless show_badge == false %}
       {% render 'sn-condition-badge', product: product, class: badge_class %}
     {% endunless %}
-  </a>
+  </span>
 
-  <h3><a href="{{ product_url }}">{{ product.title | escape }}</a></h3>
+  <h3>{{ product.title | escape }}</h3>
   <p class="{{ price_class }}">{{ product.price | money }}</p>
   <p class="{{ stock_class }}">
     {% if product.available %}
@@ -60,21 +58,28 @@
       Sold Out
     {% endif %}
   </p>
-  <a class="sn-card-button" href="{{ product_url }}">{{ button_label }}</a>
-</article>
+</a>
 
 {% stylesheet %}
   .sn-product-card {
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: var(--sn-product-card-ratio, 125 / 176);
     min-width: 0;
     overflow: hidden;
-    border: 1px solid var(--sn-line, #e5e7eb);
-    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    border: 0.0625rem solid var(--sn-line, #e5e7eb);
+    border-radius: 0.375rem;
     background: #fff;
+    color: inherit;
+    text-decoration: none;
   }
 
   .sn-product-card__image {
     position: relative;
-    height: 210px;
+    flex: 0 0 auto;
+    aspect-ratio: var(--sn-product-card-image-ratio, 25 / 21);
     display: block;
     overflow: hidden;
     background: #f4f4f5;
@@ -88,32 +93,23 @@
   }
 
   .sn-product-card h3 {
-    margin: 18px 18px 0;
-    min-height: 40px;
-    font-size: 14px;
+    margin: 1.125rem 1.125rem 0;
+    min-height: 2.5rem;
+    font-size: 0.875rem;
     line-height: 1.35;
     font-weight: 700;
   }
 
-  .sn-product-card h3 a {
-    color: inherit;
-    text-decoration: none;
-  }
-
   .sn-product-card__price {
-    margin: 12px 18px 0;
-    font-size: 20px;
+    margin: 0.75rem 1.125rem 0;
+    font-size: 1.5rem;
     font-weight: 800;
   }
 
   .sn-product-card__stock {
-    margin: 4px 18px 0;
+    margin: 0.25rem 1.125rem 1.125rem;
     color: var(--sn-muted, #6b7280);
-    font-size: 12px;
+    font-size: 0.75rem;
   }
 
-  .sn-product-card .sn-card-button {
-    width: calc(100% - 36px);
-    margin: 42px 18px 20px;
-  }
 {% endstylesheet %}
