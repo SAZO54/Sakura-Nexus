@@ -14,7 +14,7 @@
 <div
   class="group {{ block.settings.layout_direction }}"
   style="
-    --padding: {{ block.settings.padding }}px;
+    --padding: {{ block.settings.padding | divided_by: 16.0 }}rem;
     --alignment: {{ block.settings.alignment }};
   "
   {{ block.shopify_attributes }}

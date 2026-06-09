@@ -1,161 +1,158 @@
-<h1 align="center" style="position: relative;">
-  <br>
-    <img src="./assets/shoppy-x-ray.svg" alt="logo" width="200">
-  <br>
-  Shopify Skeleton Theme
-</h1>
+# Sakura Nexus Shopify Theme
 
-A minimal, carefully structured Shopify theme designed to help you quickly get started. Designed with modularity, maintainability, and Shopify's best practices in mind.
+Sakura Nexus is a Shopify theme for an anime collectibles store. It started from Shopify's Skeleton Theme and now follows a merchant-editable architecture: JSON templates define page composition, sections provide configurable page modules, blocks provide nestable editor content, and snippets hold reusable rendering logic.
 
-<p align="center">
-  <a href="./LICENSE.md"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"></a>
-  <a href="./actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Shopify/skeleton-theme/actions/workflows/ci.yml/badge.svg"></a>
-</p>
-
-## Getting started
+## Getting Started
 
 ### Prerequisites
 
-Before starting, ensure you have the latest Shopify CLI installed:
-
-- [Shopify CLI](https://shopify.dev/docs/api/shopify-cli) – helps you download, upload, preview themes, and streamline your workflows
-
-If you use VS Code:
-
-- [Shopify Liquid VS Code Extension](https://shopify.dev/docs/storefronts/themes/tools/shopify-liquid-vscode) – provides syntax highlighting, linting, inline documentation, and auto-completion specifically designed for Liquid templates
-
-### Clone
-
-Clone this repository using Git or Shopify CLI:
-
-```bash
-git clone git@github.com:Shopify/skeleton-theme.git
-# or
-shopify theme init
-```
+- [Shopify CLI](https://shopify.dev/docs/api/shopify-cli)
+- [Shopify Liquid VS Code Extension](https://shopify.dev/docs/storefronts/themes/tools/shopify-liquid-vscode), recommended for Liquid syntax, linting, and inline docs
 
 ### Preview
-
-Preview this theme using Shopify CLI:
 
 ```bash
 shopify theme dev
 ```
 
-## Theme architecture
+### Validate
+
+```bash
+shopify theme check
+```
+
+Use `jq empty` for JSON files that are plain JSON, such as locale and theme settings files:
+
+```bash
+jq empty locales/en.default.json
+jq empty locales/en.default.schema.json
+jq empty config/settings_schema.json
+```
+
+Shopify JSON templates can include Shopify's generated header comments, so validate them with Shopify tooling instead of raw `jq`.
+
+## Theme Architecture
 
 ```bash
 .
-├── assets          # Stores static assets (CSS, JS, images, fonts, etc.)
-├── blocks          # Reusable, nestable, customizable UI components
-├── config          # Global theme settings and customization options
-├── layout          # Top-level wrappers for pages (layout templates)
-├── locales         # Translation files for theme internationalization
-├── sections        # Modular full-width page components
-├── snippets        # Reusable Liquid code or HTML fragments
-└── templates       # Templates combining sections to define page structures
+├── assets          # Global assets and page-critical files only
+├── blocks          # Reusable, nestable theme editor components
+├── config          # Global theme settings and saved setting data
+├── layout          # Top-level wrappers with Shopify header/layout hooks
+├── locales         # Storefront and schema translations
+├── sections        # Merchant-editable page modules
+├── snippets        # Reusable Liquid rendering logic
+└── templates       # JSON page composition
 ```
-
-To learn more, refer to the [theme architecture documentation](https://shopify.dev/docs/storefronts/themes/architecture).
 
 ### Templates
 
-[Templates](https://shopify.dev/docs/storefronts/themes/architecture/templates#template-types) control what's rendered on each type of page in a theme.
+Templates should define composition, not rendering details. For example, `templates/index.json` composes the homepage from separate sections:
 
-The Skeleton Theme scaffolds [JSON templates](https://shopify.dev/docs/storefronts/themes/architecture/templates/json-templates) to make it easy for merchants to customize their store.
+- `welcome-modal`
+- `hero`
+- `product-carousel-or-grid`
+- `collection-links`
+- `about-banner`
+- `faq-cta`
 
-None of the template types are required, and not all of them are included in the Skeleton Theme. Refer to the [template types reference](https://shopify.dev/docs/storefronts/themes/architecture/templates#template-types) for a full list.
+This keeps the homepage editable in the Shopify theme editor and avoids one large page-specific Liquid file.
 
 ### Sections
 
-[Sections](https://shopify.dev/docs/storefronts/themes/architecture/sections) are Liquid files that allow you to create reusable modules of content that can be customized by merchants. They can also include blocks which allow merchants to add, remove, and reorder content within a section.
+Sections are full-width page modules with their own `{% schema %}` settings. Merchant-editable content belongs in section settings or section blocks, including headings, image choices, CTA URLs, selected collections, product limits, and background style.
 
-Sections are made customizable by including a `{% schema %}` in the body. For more information, refer to the [section schema documentation](https://shopify.dev/docs/storefronts/themes/architecture/sections/section-schema).
+Current homepage sections:
+
+- `sections/welcome-modal.liquid`
+- `sections/hero.liquid`
+- `sections/product-carousel-or-grid.liquid`
+- `sections/collection-links.liquid`
+- `sections/about-banner.liquid`
+- `sections/faq-cta.liquid`
+
+Legacy `sections/sakura-nexus-home.liquid` is retained for compatibility, but new homepage composition should use the modular sections above.
 
 ### Blocks
 
-[Blocks](https://shopify.dev/docs/storefronts/themes/architecture/blocks) let developers create flexible layouts by breaking down sections into smaller, reusable pieces of Liquid. Each block has its own set of settings, and can be added, removed, and reordered within a section.
+Blocks are reusable editor components that can be nested inside compatible sections. Use blocks when merchants need to add, remove, reorder, or configure repeated content. Existing examples include `blocks/group.liquid` and `blocks/text.liquid`.
 
-Blocks are made customizable by including a `{% schema %}` in the body. For more information, refer to the [block schema documentation](https://shopify.dev/docs/storefronts/themes/architecture/blocks/theme-blocks/schema).
+Blocks must include a `{% schema %}` tag. If a block is statically rendered with `{% content_for 'block' %}`, include a LiquidDoc header.
 
-## Schemas
+### Snippets
 
-When developing components defined by schema settings, we recommend these guidelines to simplify your code:
+Snippets hold reusable Liquid markup and display logic that does not need direct theme editor controls. Snippets should include a LiquidDoc header documenting purpose, parameters, and examples.
 
-- **Single property settings**: For settings that correspond to a single CSS property, use CSS variables:
+Shared Sakura Nexus snippets:
 
-  ```liquid
-  <div class="collection" style="--gap: {{ block.settings.gap }}px">
-    ...
-  </div>
+- `snippets/sn-product-card.liquid` renders product cards used across homepage, collection, product, and cart contexts.
+- `snippets/sn-condition-badge.liquid` resolves product condition from `product.metafields.custom.condition`, then falls back to condition tags.
+- `snippets/sn-section-heading.liquid` renders shared section eyebrow, heading, and optional action link markup.
+- `snippets/sn-faq-cta.liquid` renders the shared FAQ call-to-action.
 
-  {% stylesheet %}
-    .collection {
-      gap: var(--gap);
-    }
-  {% endstylesheet %}
+## Component Rules
 
-  {% schema %}
-  {
-    "settings": [{
-      "type": "range",
-      "label": "gap",
-      "id": "gap",
-      "min": 0,
-      "max": 100,
-      "unit": "px",
-      "default": 0,
-    }]
-  }
-  {% endschema %}
-  ```
+- Keep merchant-editable content in section or block schema settings.
+- Keep reusable display logic in snippets.
+- Add LiquidDoc to every snippet and to statically rendered blocks.
+- Use `{% stylesheet %}` and `{% javascript %}` inside sections, blocks, and snippets for component-level CSS and JS.
+- Keep `assets/critical.css` limited to CSS needed across every page.
+- Use CSS variables for settings that map to one CSS property, such as spacing or color.
+- Use CSS classes for settings that control multiple style rules, such as layout variants.
+- Prefer `routes.*`, `url`, `page`, or `link_list` settings over hard-coded storefront URLs.
+- Avoid unsupported Liquid patterns, including parentheses in conditions, ternaries, and treating `limit` as a filter.
 
-- **Multiple property settings**: For settings that control multiple CSS properties, use CSS classes:
+## Product Card Architecture
 
-  ```liquid
-  <div class="collection {{ block.settings.layout }}">
-    ...
-  </div>
+Product card rendering is centralized in `snippets/sn-product-card.liquid`. Pass class names when a page needs context-specific styling:
 
-  {% stylesheet %}
-    .collection--full-width {
-      /* multiple styles */
-    }
-    .collection--narrow {
-      /* multiple styles */
-    }
-  {% endstylesheet %}
+```liquid
+{% render 'sn-product-card',
+  product: product,
+  collection: collection,
+  card_class: 'sn-listing-card',
+  image_class: 'sn-listing-card__image',
+  price_class: 'sn-listing-card__price',
+  stock_class: 'sn-listing-card__stock',
+  badge_class: 'sn-condition-badge',
+  image_width: 640
+%}
+```
 
-  {% schema %}
-  {
-    "settings": [{
-      "type": "select",
-      "id": "layout",
-      "label": "layout",
-      "values": [
-        { "value": "collection--full-width", "label": "t:options.full" },
-        { "value": "collection--narrow", "label": "t:options.narrow" }
-      ]
-    }]
-  }
-  {% endschema %}
-  ```
+Condition badges should be rendered through `snippets/sn-condition-badge.liquid` so metafield and tag fallback behavior stays consistent:
 
-## CSS & JavaScript
+```liquid
+{% render 'sn-condition-badge', product: product, class: 'sn-product-badge' %}
+```
 
-For CSS and JavaScript, we recommend using the [`{% stylesheet %}`](https://shopify.dev/docs/api/liquid/tags#stylesheet) and [`{% javascript %}`](https://shopify.dev/docs/api/liquid/tags/javascript) tags. They can be included multiple times, but the code will only appear once.
+## CSS and JavaScript
 
-### `critical.css`
+Use component-scoped `{% stylesheet %}` and `{% javascript %}` tags in Liquid components. This keeps CSS and JS close to the markup they support while letting Shopify load each block only once.
 
-The Skeleton Theme explicitly separates essential CSS necessary for every page into a dedicated `critical.css` file.
+Use `assets/critical.css` only for global layout primitives, baseline resets, and styles required on every page. Component styles should live with their section, block, or snippet.
 
-## Contributing
+## Quality Gates
 
-We're excited for your contributions to the Skeleton Theme! This repository aims to remain as lean, lightweight, and fundamental as possible, and we kindly ask your contributions to align with this intention.
+Before committing theme changes:
 
-Visit our [CONTRIBUTING.md](./CONTRIBUTING.md) for a detailed overview of our process, guidelines, and recommendations.
+```bash
+shopify theme check
+jq empty locales/en.default.json
+jq empty locales/en.default.schema.json
+jq empty config/settings_schema.json
+```
+
+Manually review these scenarios in a Shopify preview:
+
+- Homepage with modular sections in `templates/index.json`
+- Collection page with filters, sorting, product cards, and empty state
+- Product page with images, variants, sold-out state, related products, and FAQ CTA
+- Cart page with empty and non-empty states
+- Search page
+- Mobile layouts for all major templates
+- Products without images
+- Products without `custom.condition` metafield
 
 ## License
 
-Skeleton Theme is open-sourced under the [MIT](./LICENSE.md) License.
-# Sakura-Nexus
+This theme is based on Shopify Skeleton Theme and uses the [MIT License](./LICENSE.md).

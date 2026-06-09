@@ -1,47 +1,661 @@
-{% comment %}
-  This section is used in the collection template to render collection page
-  listing all products within a collection.
+{% liquid
+  assign active_filter_count = 0
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
-{% endcomment %}
+  for filter in collection.filters
+    assign active_filter_count = active_filter_count | plus: filter.active_values.size
 
-<h1>{{ collection.title }}</h1>
+    if filter.type == 'price_range'
+      if filter.min_value.value != nil or filter.max_value.value != nil
+        assign active_filter_count = active_filter_count | plus: 1
+      endif
+    endif
+  endfor
+%}
 
-<div class="collection-products">
-  {% paginate collection.products by 20 %}
-    {% for product in collection.products %}
-      <div class="collection-product">
-        {% if product.featured_image %}
-          {% render 'image',
-            class: 'collection-product__image',
-            image: product.featured_image,
-            url: product.url,
-            width: 400,
-            height: 400,
-            crop: 'center'
-          %}
-        {% endif %}
-        <div class="collection-product__content">
-          <p>{{ product.title | escape | link_to: product.url }}</p>
-          <p>{{ product.price | money }}</p>
-        </div>
+<section class="sn-collection-page full-width">
+  <div class="sn-collection-hero">
+    <div class="sn-collection-hero__inner">
+      <nav class="sn-breadcrumb" aria-label="Breadcrumb">
+        <a href="{{ routes.root_url }}">Home</a>
+        <span>/</span>
+        <span>Shop</span>
+      </nav>
+
+      <div class="sn-collection-hero__title-row">
+        <h1>
+          {% if collection.handle == 'all' %}
+            All Items
+          {% else %}
+            {{ collection.title | escape }}
+          {% endif %}
+        </h1>
+        <span>{{ collection.all_products_count }} items</span>
       </div>
-    {% endfor %}
 
-    {{ paginate | default_pagination }}
+      <p>
+        {% if collection.description != blank %}
+          {{ collection.description | strip_html | truncate: 140 }}
+        {% else %}
+          Browse authentic Japanese anime goods from personal collections in Japan.
+        {% endif %}
+      </p>
+    </div>
+  </div>
+
+  {% paginate collection.products by section.settings.products_per_page %}
+    <div class="sn-collection-layout">
+      <aside class="sn-filter-panel" aria-label="Collection filters">
+        <div class="sn-filter-panel__header">
+          <h2>Filters</h2>
+          {% if active_filter_count > 0 %}
+            <a href="{{ collection.url }}?sort_by={{ collection.sort_by | default: collection.default_sort_by }}">Clear all</a>
+          {% endif %}
+        </div>
+
+        {% if collection.filters.size > 0 %}
+          <form class="sn-filter-form">
+            {% if collection.sort_by != blank %}
+              <input type="hidden" name="sort_by" value="{{ collection.sort_by }}">
+            {% endif %}
+
+            {% for filter in collection.filters %}
+              {% unless filter.type == 'price_range' %}
+                <fieldset class="sn-filter-group">
+                  <legend>{{ filter.label }}</legend>
+
+                  {% for filter_value in filter.values %}
+                    <label class="sn-filter-option">
+                      <input
+                        type="checkbox"
+                        name="{{ filter_value.param_name }}"
+                        value="{{ filter_value.value }}"
+                        {% if filter_value.active %}checked{% endif %}
+                        {% if filter_value.count == 0 and filter_value.active == false %}disabled{% endif %}
+                      >
+                      <span>{{ filter_value.label }}</span>
+                    </label>
+                  {% endfor %}
+                </fieldset>
+              {% endunless %}
+            {% endfor %}
+
+            <button class="sn-filter-submit" type="submit">Apply filters</button>
+          </form>
+        {% else %}
+          <div class="sn-filter-group">
+            <h3>Series</h3>
+            <label class="sn-filter-option"><input type="checkbox" checked disabled><span>ONE PIECE</span></label>
+            <label class="sn-filter-option"><input type="checkbox" disabled><span>Other Series</span></label>
+          </div>
+          <div class="sn-filter-group">
+            <h3>Character</h3>
+            <label class="sn-filter-option"><input type="checkbox" disabled><span>Luffy</span></label>
+            <label class="sn-filter-option"><input type="checkbox" checked disabled><span>Zoro</span></label>
+            <label class="sn-filter-option"><input type="checkbox" disabled><span>Sanji</span></label>
+            <label class="sn-filter-option"><input type="checkbox" disabled><span>Nami</span></label>
+            <label class="sn-filter-option"><input type="checkbox" disabled><span>Other</span></label>
+          </div>
+          <div class="sn-filter-group">
+            <h3>Item Type</h3>
+            <label class="sn-filter-option"><input type="checkbox" disabled><span>Figure</span></label>
+            <label class="sn-filter-option"><input type="checkbox" disabled><span>Acrylic Stand</span></label>
+            <label class="sn-filter-option"><input type="checkbox" disabled><span>Badge</span></label>
+            <label class="sn-filter-option"><input type="checkbox" disabled><span>Plush</span></label>
+            <label class="sn-filter-option"><input type="checkbox" disabled><span>Card</span></label>
+            <label class="sn-filter-option"><input type="checkbox" disabled><span>Other Goods</span></label>
+          </div>
+          <div class="sn-filter-group">
+            <h3>Condition</h3>
+            <label class="sn-filter-option"><input type="checkbox" checked disabled><span>New</span></label>
+            <label class="sn-filter-option"><input type="checkbox" checked disabled><span>Opened</span></label>
+            <label class="sn-filter-option"><input type="checkbox" disabled><span>Used</span></label>
+          </div>
+        {% endif %}
+      </aside>
+
+      <div class="sn-collection-main">
+        <form class="sn-sort-bar" method="get">
+          <p>
+            {% if paginate.items > 0 %}
+              Showing {{ paginate.current_offset | plus: 1 }}-{% if paginate.next %}{{ paginate.current_offset | plus: paginate.page_size }}{% else %}{{ paginate.items }}{% endif %} of {{ paginate.items }} items
+            {% else %}
+              Showing 0 of 0 items
+            {% endif %}
+          </p>
+
+          {% for filter in collection.filters %}
+            {% for filter_value in filter.active_values %}
+              <input type="hidden" name="{{ filter_value.param_name }}" value="{{ filter_value.value }}">
+            {% endfor %}
+          {% endfor %}
+
+          <label for="SortBy-{{ section.id }}">Sort by:</label>
+          <select id="SortBy-{{ section.id }}" name="sort_by" onchange="this.form.submit()">
+            {% for option in collection.sort_options %}
+              <option
+                value="{{ option.value }}"
+                {% if option.value == collection.sort_by or collection.sort_by == blank and option.value == collection.default_sort_by %}
+                  selected
+                {% endif %}
+              >
+                {{ option.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </form>
+
+        {% if collection.products.size > 0 %}
+          <div class="sn-collection-grid">
+            {% for product in collection.products %}
+              {% render 'sn-product-card',
+                product: product,
+                collection: collection,
+                card_class: 'sn-listing-card',
+                image_class: 'sn-listing-card__image',
+                price_class: 'sn-listing-card__price',
+                stock_class: 'sn-listing-card__stock',
+                badge_class: 'sn-condition-badge',
+                image_width: 640
+              %}
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="sn-empty-state">
+            <h2>No items found.</h2>
+            <p>Please try changing your filters.</p>
+            <a href="{{ routes.all_products_collection_url }}">View all items</a>
+          </div>
+        {% endif %}
+
+        {% if paginate.pages > 1 %}
+          <nav class="sn-pagination" aria-label="Pagination">
+            {{ paginate | default_pagination }}
+          </nav>
+        {% endif %}
+      </div>
+    </div>
   {% endpaginate %}
-</div>
+
+  {% render 'sn-faq-cta',
+    class: 'sn-collection-faq',
+    heading: 'Questions before ordering?',
+    text: 'Learn about authenticity, shipping, customs, and payment methods.',
+    url: '/pages/faq',
+    label: 'View FAQ'
+  %}
+</section>
 
 {% stylesheet %}
-  .collection-products {
+  .sn-collection-page {
+    --sn-pink: #e8a0bf;
+    --sn-pink-strong: #d67da6;
+    --sn-ink: #1f1f1f;
+    --sn-muted: #6b7380;
+    --sn-body: #384052;
+    --sn-line: #e5e8eb;
+    --sn-cream: #faf7f2;
+    font-family: var(--font-primary--family);
+    color: var(--sn-ink);
+    background: #fff;
+  }
+
+  .sn-collection-page a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .sn-collection-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--sn-cream);
+  }
+
+  .sn-collection-hero::after {
+    content: '';
+    position: absolute;
+    top: -5rem;
+    right: -1.25rem;
+    width: 13.75rem;
+    height: 13.75rem;
+    border-radius: 62.44rem;
+    background: rgba(232, 160, 191, 0.14);
+  }
+
+  .sn-collection-hero__inner {
+    position: relative;
+    z-index: 1;
+    width: var(--sn-wide-content-width);
+    min-height: 11.06rem;
+    margin: 0 auto;
+    padding: 1.75rem 0 2.125rem;
+  }
+
+  .sn-breadcrumb {
+    display: flex;
+    gap: 0.625rem;
+    align-items: center;
+    color: var(--sn-muted);
+    font-size: 0.8125rem;
+  }
+
+  .sn-collection-hero__title-row {
+    display: flex;
+    align-items: center;
+    gap: 1.125rem;
+    margin-top: 0.625rem;
+  }
+
+  .sn-collection-hero h1 {
+    font-size: 2.75rem;
+    line-height: 1.05;
+    font-weight: 800;
+  }
+
+  .sn-collection-hero__title-row span {
+    color: var(--sn-muted);
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .sn-collection-hero__inner > p {
+    margin-top: 0.625rem;
+    color: var(--sn-body);
+    font-size: 0.875rem;
+  }
+
+  .sn-collection-layout {
+    width: var(--sn-wide-content-width);
+    margin: 0 auto;
+    padding: 3rem 0 3.75rem;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+    grid-template-columns: 16.25rem minmax(0, 1fr);
+    gap: 3rem;
+  }
+
+  .sn-filter-panel {
+    align-self: start;
+    padding: 1rem;
+    border: 0.0625rem solid var(--sn-line);
+    border-radius: 0.375rem;
+    background: #fff;
+  }
+
+  .sn-filter-panel__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .sn-filter-panel h2 {
+    font-size: 1.5rem;
+    line-height: 1.1;
+  }
+
+  .sn-filter-panel__header a,
+  .sn-filter-submit {
+    color: var(--sn-pink-strong);
+    font-size: 0.8125rem;
+    font-weight: 700;
+  }
+
+  .sn-filter-form {
+    display: grid;
+    gap: 0;
+  }
+
+  .sn-filter-group {
+    margin: 1rem 0 0;
+    padding: 1rem 0 0;
+    border: 0;
+    border-top: 0.0625rem solid var(--sn-line);
+  }
+
+  .sn-filter-group legend,
+  .sn-filter-group h3 {
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    line-height: 1.2;
+    font-weight: 700;
+  }
+
+  .sn-filter-option {
+    min-height: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--sn-body);
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+
+  .sn-filter-option input {
+    appearance: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    flex: 0 0 1.125rem;
+    border: 0.0625rem solid var(--sn-line);
+    border-radius: 0.25rem;
+    background: #fff;
+  }
+
+  .sn-filter-option input:checked {
+    border-color: var(--sn-pink);
+    background: var(--sn-pink);
+    box-shadow: inset 0 0 0 0.1875rem #fff;
+  }
+
+  .sn-filter-option input:disabled:not(:checked) {
+    opacity: 1;
+  }
+
+  .sn-filter-submit {
+    justify-self: start;
+    margin-top: 1rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .sn-sort-bar {
+    min-height: 3.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.5625rem 0.875rem;
+    border: 0.0625rem solid rgba(232, 160, 191, 0.25);
+    border-radius: 0.375rem;
+    background: rgba(232, 160, 191, 0.1);
+  }
+
+  .sn-sort-bar p {
+    margin-right: auto;
+    color: var(--sn-body);
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .sn-sort-bar label {
+    color: var(--sn-muted);
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .sn-sort-bar select {
+    min-height: 2.25rem;
+    padding: 0 2.125rem 0 0.875rem;
+    border: 0.0625rem solid var(--sn-ink);
+    border-radius: 0.375rem;
+    background-color: #fff;
+    color: var(--sn-ink);
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  .sn-collection-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: min(var(--sn-product-card-gap-max, 1.5rem), 4vw);
+    margin-top: 3rem;
+  }
+
+  .sn-listing-card {
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: var(--sn-product-card-ratio, 125 / 176);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 0.0625rem solid var(--sn-line);
+    border-radius: 0.375rem;
+    background: #fff;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .sn-listing-card__image {
+    position: relative;
+    flex: 0 0 auto;
+    aspect-ratio: var(--sn-product-card-image-ratio, 25 / 21);
+    display: block;
+    overflow: hidden;
+    background: #f4f4f5;
+  }
+
+  .sn-listing-card__image img,
+  .sn-listing-card__image svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .sn-condition-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    min-height: 1.562rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.625rem;
+    border-radius: 0.375rem;
+    background: var(--sn-pink);
+    color: #fff;
+    font-size: 0.6875rem;
+    line-height: 1;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .sn-condition-badge--like-new,
+  .sn-condition-badge--opened {
+    background: #f4c7d9;
+    color: #7a294d;
+  }
+
+  .sn-condition-badge--very-good {
+    background: #cee8ce;
+    color: #215a21;
+  }
+
+  .sn-condition-badge--good,
+  .sn-condition-badge--used {
+    background: #6b8e23;
+    color: #fff;
+  }
+
+  .sn-condition-badge--acceptable {
+    background: #bf9571;
+    color: #fff;
+  }
+
+  .sn-listing-card__body {
+    padding: 1.125rem 1.125rem 1.25rem;
+  }
+
+  .sn-listing-card h3 {
+    min-height: 2.375rem;
+    margin: 1.125rem 1.125rem 0;
+    font-size: 0.875rem;
+    line-height: 1.35;
+    font-weight: 700;
+  }
+
+  .sn-listing-card__price {
+    margin: 0.75rem 1.125rem 0;
+    font-size: 1.25rem;
+    line-height: 1.2;
+    font-weight: 800;
+  }
+
+  .sn-listing-card__stock {
+    margin: 0.25rem 1.125rem 0;
+    color: #6b7280;
+    font-size: 0.75rem;
+  }
+
+  .sn-empty-state {
+    min-height: 22.5rem;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 0.75rem;
+    margin-top: 3rem;
+    border: 0.0625rem solid var(--sn-line);
+    border-radius: 0.375rem;
+    text-align: center;
+  }
+
+  .sn-empty-state h2 {
+    font-size: 1.5rem;
+  }
+
+  .sn-empty-state p {
+    color: var(--sn-muted);
+  }
+
+  .sn-empty-state a {
+    min-height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+    margin-top: 0.5rem;
+    padding: 0 1.375rem;
+    border-radius: 0.375rem;
+    background: var(--sn-pink);
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .sn-pagination {
+    margin-top: 3rem;
+  }
+
+  .sn-pagination .pagination,
+  .sn-pagination > span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.375rem;
+  }
+
+  .sn-pagination a,
+  .sn-pagination .current,
+  .sn-pagination span {
+    min-width: 3.125rem;
+    min-height: 3.125rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0.0625rem solid var(--sn-ink);
+    border-radius: 0.375rem;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .sn-pagination .current {
+    border-color: var(--sn-pink);
+    background: var(--sn-pink);
+    color: #fff;
+  }
+
+  .sn-collection-faq {
+    padding: 4.5rem 1.25rem;
+    background: var(--sn-cream);
+    text-align: center;
+  }
+
+  .sn-collection-faq h2 {
+    font-size: 2rem;
+    line-height: 1.2;
+    font-weight: 800;
+  }
+
+  .sn-collection-faq p {
+    margin-top: 0.75rem;
+    color: var(--sn-body);
+    font-size: 0.9375rem;
+  }
+
+  .sn-collection-faq a {
+    min-height: 3rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1.5rem;
+    padding: 0 1.875rem;
+    border-radius: 0.375rem;
+    background: var(--sn-pink);
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  @media (max-width: 73.75rem) {
+    .sn-collection-hero__inner,
+    .sn-collection-layout {
+      width: calc(100% - 4rem);
+    }
+  }
+
+  @media (max-width: 61.25rem) {
+    .sn-collection-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .sn-filter-panel {
+      position: static;
+    }
+
+    .sn-collection-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .sn-collection-hero__inner,
+    .sn-collection-layout {
+      width: calc(100% - 2.5rem);
+    }
+
+    .sn-collection-hero h1 {
+      font-size: 2.375rem;
+    }
+
+    .sn-collection-hero__title-row,
+    .sn-sort-bar {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .sn-sort-bar p {
+      margin-right: 0;
+    }
+
+    .sn-sort-bar select {
+      width: 100%;
+    }
+
+    .sn-collection-grid {
+      grid-template-columns: 1fr;
+    }
   }
 {% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.collection",
-  "settings": []
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products per page",
+      "min": 6,
+      "max": 24,
+      "step": 3,
+      "default": 9
+    }
+  ]
 }
 {% endschema %}

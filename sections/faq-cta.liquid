@@ -1,0 +1,42 @@
+{% render 'sn-faq-cta',
+  heading: section.settings.heading,
+  text: section.settings.text,
+  url: section.settings.url,
+  label: section.settings.label
+%}
+
+{% schema %}
+{
+  "name": "FAQ CTA",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Questions before ordering?"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Learn about authenticity, shipping, customs, and payment methods."
+    },
+    {
+      "type": "url",
+      "id": "url",
+      "label": "URL"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Button label",
+      "default": "View FAQ"
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ CTA"
+    }
+  ]
+}
+{% endschema %}

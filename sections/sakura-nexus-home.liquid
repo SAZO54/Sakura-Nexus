@@ -1,0 +1,894 @@
+<main class="sn-home full-width">
+  <div class="sn-welcome-modal" data-sn-welcome-modal hidden>
+    <div class="sn-welcome-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="sn-welcome-title">
+      <div class="sn-welcome-modal__accent"></div>
+      <p class="sn-welcome-modal__mark" aria-hidden="true">Sakura</p>
+      <h2 id="sn-welcome-title">Welcome to Sakura Nexus</h2>
+      <p class="sn-welcome-modal__subtitle">Authentic Anime Goods from Japan</p>
+      <p class="sn-welcome-modal__body">
+        Discover carefully selected Japanese anime collectibles from personal collections in Japan.
+      </p>
+      <button class="sn-button sn-button--primary" type="button" data-sn-welcome-close>Enter Store</button>
+    </div>
+  </div>
+
+  <section class="sn-hero">
+    <div class="sn-hero__inner">
+      <div class="sn-hero__copy">
+        <p class="sn-eyebrow">Authentic anime goods from Japan</p>
+        <h1>Discover Japan's Finest Anime Collectibles</h1>
+        <p class="sn-hero__lead">
+          Carefully selected ONE PIECE figures, badges and rare goods from personal collections in Japan, shipped worldwide.
+        </p>
+        <div class="sn-actions">
+          <a class="sn-button sn-button--primary" href="{{ routes.all_products_collection_url }}">Shop Now</a>
+          <a class="sn-button sn-button--ghost" href="/pages/faq">View FAQ</a>
+        </div>
+        <ul class="sn-trust" aria-label="Store highlights">
+          <li>100% Authentic</li>
+          <li>Ships from Japan</li>
+          <li>Secure Payment</li>
+        </ul>
+      </div>
+
+      <div class="sn-hero__media">
+        <img
+          src="{{ 'sakura-hero.jpg' | asset_url }}"
+          alt="White dog standing in a green flower field"
+          width="522"
+          height="715"
+          loading="eager"
+        >
+      </div>
+    </div>
+  </section>
+
+  <section class="sn-product-section sn-product-section--white">
+    <div class="sn-section-heading">
+      <div>
+        <p class="sn-eyebrow">New arrivals</p>
+        <h2>Latest Additions</h2>
+      </div>
+      <a href="{{ routes.all_products_collection_url }}?sort_by=created-descending">View All &rarr;</a>
+    </div>
+
+    <div class="sn-product-grid">
+      {% for product in collections.all.products limit: 4 %}
+        {% liquid
+          assign condition = product.metafields.custom.condition.value | default: product.metafields.custom.condition
+          if condition == blank
+            if product.tags contains 'condition_opened'
+              assign condition = 'Like New'
+            elsif product.tags contains 'condition_used'
+              assign condition = 'Good'
+            else
+              assign condition = 'New'
+            endif
+          endif
+        %}
+        <a class="sn-product-card" href="{{ product.url }}" aria-label="View details for {{ product.title | escape }}">
+          <span class="sn-product-card__image">
+            {% if product.featured_image %}
+              {{ product.featured_image | image_url: width: 544 | image_tag: loading: 'lazy', alt: product.title }}
+            {% else %}
+              {{ 'product-1' | placeholder_svg_tag }}
+            {% endif %}
+            <span class="sn-badge sn-badge--{{ condition | handleize }}">{{ condition }}</span>
+          </span>
+          <h3>{{ product.title | escape }}</h3>
+          <p class="sn-product-card__price">{{ product.price | money }}</p>
+          <p class="sn-product-card__stock">{% if product.available %}In Stock{% else %}Sold Out{% endif %}</p>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="sn-product-section sn-product-section--tint">
+    <div class="sn-section-heading">
+      <div>
+        <p class="sn-eyebrow">Featured</p>
+        <h2>Handpicked by Sakura Nexus</h2>
+      </div>
+    </div>
+
+    <div class="sn-product-grid">
+      {% assign featured_count = 0 %}
+      {% for product in collections.all.products limit: 12 %}
+        {% if product.tags contains 'featured' %}
+          {% if featured_count < 4 %}
+            {% assign featured_count = featured_count | plus: 1 %}
+            {% liquid
+              assign condition = product.metafields.custom.condition.value | default: product.metafields.custom.condition
+              if condition == blank
+                if product.tags contains 'condition_opened'
+                  assign condition = 'Like New'
+                elsif product.tags contains 'condition_used'
+                  assign condition = 'Good'
+                else
+                  assign condition = 'New'
+                endif
+              endif
+            %}
+            <a class="sn-product-card" href="{{ product.url }}" aria-label="View details for {{ product.title | escape }}">
+              <span class="sn-product-card__image">
+                {% if product.featured_image %}
+                  {{ product.featured_image | image_url: width: 544 | image_tag: loading: 'lazy', alt: product.title }}
+                {% else %}
+                  {{ 'product-1' | placeholder_svg_tag }}
+                {% endif %}
+                <span class="sn-badge sn-badge--{{ condition | handleize }}">{{ condition }}</span>
+              </span>
+              <h3>{{ product.title | escape }}</h3>
+              <p class="sn-product-card__price">{{ product.price | money }}</p>
+              <p class="sn-product-card__stock">{% if product.available %}In Stock{% else %}Sold Out{% endif %}</p>
+            </a>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+      {% if featured_count == 0 %}
+        {% for product in collections.all.products limit: 4 offset: 4 %}
+          {% liquid
+            assign condition = product.metafields.custom.condition.value | default: product.metafields.custom.condition
+            if condition == blank
+              if product.tags contains 'condition_opened'
+                assign condition = 'Like New'
+              elsif product.tags contains 'condition_used'
+                assign condition = 'Good'
+              else
+                assign condition = 'New'
+              endif
+            endif
+          %}
+          <a class="sn-product-card" href="{{ product.url }}" aria-label="View details for {{ product.title | escape }}">
+            <span class="sn-product-card__image">
+              {% if product.featured_image %}
+                {{ product.featured_image | image_url: width: 544 | image_tag: loading: 'lazy', alt: product.title }}
+              {% else %}
+                {{ 'product-1' | placeholder_svg_tag }}
+              {% endif %}
+              <span class="sn-badge sn-badge--{{ condition | handleize }}">{{ condition }}</span>
+            </span>
+            <h3>{{ product.title | escape }}</h3>
+            <p class="sn-product-card__price">{{ product.price | money }}</p>
+            <p class="sn-product-card__stock">{% if product.available %}In Stock{% else %}Sold Out{% endif %}</p>
+          </a>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="sn-collections">
+    <div class="sn-section-heading">
+      <div>
+        <p class="sn-eyebrow">Browse by collection</p>
+        <h2>Shop by Series & Type</h2>
+      </div>
+    </div>
+
+    <div class="sn-collection-grid">
+      <a class="sn-collection-card" href="{{ routes.collections_url }}/one-piece">
+        <img src="{{ 'sakura-collection-one-piece.jpg' | asset_url }}" alt="" width="205" height="160" loading="lazy">
+        <strong>ONE PIECE</strong>
+        <span>All series goods</span>
+        <b>&rarr;</b>
+      </a>
+      <a class="sn-collection-card" href="{{ routes.collections_url }}/zoro-collection">
+        <img src="{{ 'sakura-collection-zoro.jpg' | asset_url }}" alt="" width="205" height="160" loading="lazy">
+        <strong>Zoro Collection</strong>
+        <span>Fan favourite</span>
+        <b>&rarr;</b>
+      </a>
+      <a class="sn-collection-card" href="{{ routes.collections_url }}/figures">
+        <img src="{{ 'sakura-collection-figures.jpg' | asset_url }}" alt="" width="205" height="160" loading="lazy">
+        <strong>Figures</strong>
+        <span>Scale & prize figs</span>
+        <b>&rarr;</b>
+      </a>
+      <a class="sn-collection-card" href="{{ routes.collections_url }}/acrylic-stands">
+        <img src="{{ 'sakura-collection-acrylic.jpg' | asset_url }}" alt="" width="205" height="160" loading="lazy">
+        <strong>Acrylic Stands</strong>
+        <span>Desktop decor</span>
+        <b>&rarr;</b>
+      </a>
+      <a class="sn-collection-card" href="{{ routes.collections_url }}/badges">
+        <img src="{{ 'sakura-collection-badges.jpg' | asset_url }}" alt="" width="205" height="160" loading="lazy">
+        <strong>Badges & Cards</strong>
+        <span>Pin & card sets</span>
+        <b>&rarr;</b>
+      </a>
+    </div>
+  </section>
+
+  <section class="sn-about">
+    <div class="sn-about__copy">
+      <p class="sn-eyebrow">About Sakura Nexus</p>
+      <h2>Direct from Japan,<br>For Anime Lovers Worldwide</h2>
+      <p>
+        Sakura Nexus offers authentic Japanese anime collectibles sourced from personal collections in Japan. Every item is carefully inspected and shipped with care directly to you.
+      </p>
+      <div class="sn-actions">
+        <a class="sn-button sn-button--primary" href="{{ routes.all_products_collection_url }}">Shop Items</a>
+        <a class="sn-button sn-button--ghost" href="/pages/faq">Read FAQ</a>
+      </div>
+    </div>
+
+    <div class="sn-stats" aria-label="Sakura Nexus facts">
+      <div>
+        <strong>100%</strong>
+        <span>Authentic Goods</span>
+      </div>
+      <div>
+        <strong>Japan</strong>
+        <span>Ships From</span>
+      </div>
+      <div>
+        <strong>Worldwide</strong>
+        <span>Delivery</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="sn-faq-cta">
+    <h2>Questions before ordering?</h2>
+    <p>Learn about authenticity, shipping, customs, and payment methods.</p>
+    <a class="sn-button sn-button--primary" href="/pages/faq">View FAQ</a>
+  </section>
+</main>
+
+{% stylesheet %}
+  .sn-home {
+    --sn-pink: #e8a0bf;
+    --sn-pink-strong: #d67ca7;
+    --sn-ink: #1f1f1f;
+    --sn-muted: #6b7280;
+    --sn-line: #e5e7eb;
+    --sn-cream: #faf7f2;
+    font-family: var(--font-primary--family);
+    color: var(--sn-ink);
+    background: #fff;
+  }
+
+  .sn-home a {
+    text-decoration: none;
+  }
+
+  .sn-welcome-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 1.5rem;
+    background: rgba(31, 31, 31, 0.48);
+  }
+
+  .sn-welcome-modal[hidden] {
+    display: none;
+  }
+
+  .sn-welcome-modal__dialog {
+    position: relative;
+    width: min(30rem, 100%);
+    overflow: hidden;
+    padding: 2rem 2.5rem 1.875rem;
+    border-radius: 0.5rem;
+    background: #fff;
+    text-align: center;
+    box-shadow: 0 1.5rem 4.375rem rgba(31, 31, 31, 0.22);
+  }
+
+  .sn-welcome-modal__accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 0.5rem;
+    background: #e8a0bf;
+  }
+
+  .sn-welcome-modal__mark {
+    margin-top: 0;
+    color: #e8a0bf;
+    font-size: 0.8125rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .sn-welcome-modal h2 {
+    margin-top: 1.125rem;
+    font-size: 1.75rem;
+    line-height: 1.2;
+    font-weight: 800;
+  }
+
+  .sn-welcome-modal__subtitle {
+    margin-top: 0.75rem;
+    color: #d67ca7;
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  .sn-welcome-modal__body {
+    margin: 1.75rem auto 0;
+    max-width: 22.5rem;
+    color: #374151;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  .sn-welcome-modal .sn-button {
+    width: min(22.5rem, 100%);
+    margin-top: 2rem;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .sn-hero,
+  .sn-product-section,
+  .sn-collections,
+  .sn-about,
+  .sn-faq-cta {
+    padding-inline: 0;
+  }
+
+  .sn-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--sn-cream);
+  }
+
+  .sn-hero::after,
+  .sn-about::after {
+    content: '';
+    position: absolute;
+    border-radius: 62.44rem;
+    background: rgba(232, 160, 191, 0.13);
+    pointer-events: none;
+  }
+
+  .sn-hero::after {
+    width: 33.75rem;
+    height: 33.75rem;
+    top: -2.5rem;
+    right: 6rem;
+  }
+
+  .sn-hero__inner {
+    position: relative;
+    z-index: 1;
+    width: var(--sn-wide-content-width);
+    min-height: 42.5rem;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 26.25rem;
+    align-items: center;
+    gap: 5.75rem;
+  }
+
+  .sn-eyebrow {
+    color: var(--sn-pink-strong);
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .sn-hero h1 {
+    max-width: 36.25rem;
+    margin-top: 1.125rem;
+    font-size: 3.625rem;
+    line-height: 1.03;
+    font-weight: 900;
+  }
+
+  .sn-hero__lead {
+    max-width: 33.75rem;
+    margin-top: 1.5rem;
+    color: #374151;
+    font-size: 1.062rem;
+    line-height: 1.45;
+  }
+
+  .sn-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.875rem;
+  }
+
+  .sn-button,
+  .sn-card-button {
+    min-height: 3rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    transition: transform 160ms ease, box-shadow 160ms ease;
+  }
+
+  .sn-button:hover,
+  .sn-card-button:hover {
+    transform: translateY(-0.0625rem);
+  }
+
+  .sn-button--primary {
+    min-width: 8.875rem;
+    padding: 0 1.625rem;
+    background: var(--sn-pink);
+    color: #fff;
+  }
+
+  .sn-button--ghost {
+    min-width: 8.875rem;
+    padding: 0 1.625rem;
+    background: #fff;
+    border: 0.125rem solid var(--sn-pink);
+    color: var(--sn-pink);
+  }
+
+  .sn-trust {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.75rem;
+    margin: 1.75rem 0 0;
+    padding: 0;
+    list-style: none;
+    color: var(--sn-muted);
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .sn-trust li::before {
+    content: '\2713';
+    margin-right: 0.5rem;
+    color: var(--sn-pink);
+  }
+
+  .sn-hero__media {
+    position: relative;
+    z-index: 1;
+    aspect-ratio: 522 / 715;
+    overflow: hidden;
+    border-radius: 1.75rem;
+  }
+
+  .sn-hero__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .sn-product-section {
+    padding-block: 4.875rem 5.125rem;
+  }
+
+  .sn-product-section--white,
+  .sn-collections,
+  .sn-faq-cta {
+    background: #fff;
+  }
+
+  .sn-product-section--tint,
+  .sn-about {
+    background: var(--sn-cream);
+  }
+
+  .sn-section-heading {
+    width: var(--sn-wide-content-width);
+    margin: 0 auto 2.125rem;
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .sn-section-heading h2 {
+    margin-top: 0.75rem;
+    font-size: 1.875rem;
+    line-height: 1.2;
+    font-weight: 800;
+  }
+
+  .sn-section-heading > a {
+    color: var(--sn-pink);
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  .sn-product-grid {
+    width: var(--sn-wide-content-width);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: min(var(--sn-product-card-gap-max, 1.5rem), 4vw);
+  }
+
+  .sn-product-card {
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: var(--sn-product-card-ratio, 125 / 176);
+    min-width: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border: 0.0625rem solid var(--sn-line);
+    border-radius: 0.375rem;
+    background: #fff;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .sn-product-card__image {
+    position: relative;
+    flex: 0 0 auto;
+    aspect-ratio: var(--sn-product-card-image-ratio, 25 / 21);
+    overflow: hidden;
+    background: #f4f4f5;
+  }
+
+  .sn-product-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .sn-badge {
+    position: absolute;
+    top: 1.062rem;
+    left: 1.062rem;
+    min-height: 1.562rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.625rem;
+    border-radius: 0.375rem;
+    font-size: 0.6875rem;
+    line-height: 1;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .sn-badge--pink {
+    background: var(--sn-pink);
+    color: #fff;
+  }
+
+  .sn-badge--soft {
+    background: #f4c7d9;
+    color: #7a294d;
+  }
+
+  .sn-badge--green {
+    background: #cee8ce;
+    color: #215a21;
+  }
+
+  .sn-badge--olive {
+    background: #6b8e23;
+    color: #fff;
+  }
+
+  .sn-badge--brown {
+    background: #bf9571;
+    color: #fff;
+  }
+
+  .sn-product-card h3 {
+    margin: 1.125rem 1.125rem 0;
+    min-height: 2.5rem;
+    font-size: 0.875rem;
+    line-height: 1.35;
+    font-weight: 700;
+  }
+
+  .sn-product-card__price {
+    margin: 0.75rem 1.125rem 0;
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+
+  .sn-product-card__stock {
+    margin: 0.25rem 1.125rem 1.125rem;
+    color: var(--sn-muted);
+    font-size: 0.75rem;
+  }
+
+  .sn-collections {
+    padding-block: 4.625rem 5.125rem;
+  }
+
+  .sn-collection-grid {
+    width: var(--sn-wide-content-width);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  .sn-collection-card {
+    position: relative;
+    min-height: 10rem;
+    overflow: hidden;
+    padding: 2.625rem 1.125rem 1.125rem;
+    border: 0.0625rem solid var(--sn-line);
+    border-radius: 0.75rem;
+    background: #fff5f8;
+  }
+
+  .sn-collection-card img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.9;
+  }
+
+  .sn-collection-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(255, 245, 248, 0.96), rgba(255, 245, 248, 0.72) 52%, rgba(255, 245, 248, 0.14));
+  }
+
+  .sn-collection-card strong,
+  .sn-collection-card span,
+  .sn-collection-card b {
+    position: relative;
+    z-index: 1;
+    display: block;
+  }
+
+  .sn-collection-card strong {
+    font-size: 0.9375rem;
+  }
+
+  .sn-collection-card span {
+    margin-top: 0.75rem;
+    color: var(--sn-muted);
+    font-size: 0.75rem;
+  }
+
+  .sn-collection-card b {
+    position: absolute;
+    right: 1.25rem;
+    bottom: 1.5rem;
+    color: var(--sn-pink);
+    font-size: 1rem;
+  }
+
+  .sn-about {
+    position: relative;
+    overflow: hidden;
+    padding-block: 5.5rem;
+    display: grid;
+    grid-template-columns: 8rem minmax(0, 1fr) minmax(0, 1fr) 8rem;
+    gap: 0rem;
+    align-items: center;
+  }
+
+  .sn-about::after {
+    width: 22.5rem;
+    height: 22.5rem;
+    right: -2.5rem;
+    bottom: -7.5rem;
+  }
+
+  .sn-about__copy {
+    grid-column: 2;
+    position: relative;
+    z-index: 1;
+  }
+
+  .sn-about h2 {
+    margin-top: 1.125rem;
+    font-size: 2.125rem;
+    line-height: 1.18;
+    font-weight: 800;
+  }
+
+  .sn-about__copy > p:not(.sn-eyebrow) {
+    margin-top: 1.75rem;
+    color: #374151;
+    font-size: 1rem;
+    line-height: 1.48;
+  }
+
+  .sn-stats {
+    grid-column: 3;
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  .sn-stats div {
+    min-height: 7.5rem;
+    padding: 1.688rem 1.125rem;
+    border: 0.0625rem solid var(--sn-line);
+    border-radius: 0.75rem;
+    background: #fff;
+  }
+
+  .sn-stats strong,
+  .sn-stats span {
+    display: block;
+  }
+
+  .sn-stats strong {
+    color: var(--sn-pink);
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .sn-stats span {
+    margin-top: 1rem;
+    color: var(--sn-muted);
+    font-size: 0.75rem;
+  }
+
+  .sn-faq-cta {
+    padding-block: 4.625rem;
+    text-align: center;
+  }
+
+  .sn-faq-cta h2,
+  .sn-faq-cta p {
+    width: var(--sn-wide-content-width);
+    margin-inline: auto;
+  }
+
+  .sn-faq-cta h2 {
+    font-size: 1.875rem;
+    line-height: 1.2;
+  }
+
+  .sn-faq-cta p {
+    margin-top: 0.875rem;
+    color: var(--sn-muted);
+    font-size: 0.9375rem;
+  }
+
+  .sn-faq-cta .sn-button {
+    margin-top: 1.625rem;
+  }
+
+  @media (max-width: 68.75rem) {
+    .sn-hero__inner,
+    .sn-section-heading,
+    .sn-product-grid,
+    .sn-collection-grid,
+    .sn-faq-cta h2,
+    .sn-faq-cta p {
+      width: calc(100% - 4rem);
+    }
+
+    .sn-hero__inner {
+      grid-template-columns: minmax(0, 1fr) 21.25rem;
+      gap: 3rem;
+    }
+
+    .sn-hero h1 {
+      font-size: 2.875rem;
+    }
+
+    .sn-product-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .sn-collection-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .sn-about {
+      grid-template-columns: 1fr;
+    }
+
+    .sn-about__copy,
+    .sn-stats {
+      grid-column: 1;
+      width: calc(100% - 4rem);
+      margin-inline: auto;
+    }
+  }
+
+  @media (max-width: 45rem) {
+    .sn-hero__inner,
+    .sn-section-heading,
+    .sn-product-grid,
+    .sn-collection-grid,
+    .sn-faq-cta h2,
+    .sn-faq-cta p {
+      width: calc(100% - 2.5rem);
+    }
+
+    .sn-hero__inner {
+      min-height: auto;
+      padding-block: 3.5rem;
+      grid-template-columns: 1fr;
+    }
+
+    .sn-hero::after {
+      right: -11.25rem;
+      top: 5rem;
+    }
+
+    .sn-hero h1 {
+      font-size: 2.5rem;
+    }
+
+    .sn-hero__lead {
+      font-size: 1rem;
+    }
+
+    .sn-hero__media {
+      max-height: 26.25rem;
+    }
+
+    .sn-product-section,
+    .sn-collections,
+    .sn-about,
+    .sn-faq-cta {
+      padding-block: 3.5rem;
+    }
+
+    .sn-section-heading {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .sn-section-heading h2,
+    .sn-faq-cta h2 {
+      font-size: 1.625rem;
+    }
+
+    .sn-product-grid,
+    .sn-collection-grid,
+    .sn-stats {
+      grid-template-columns: 1fr;
+    }
+
+    .sn-about__copy,
+    .sn-stats {
+      width: calc(100% - 2.5rem);
+    }
+
+    .sn-collection-card {
+      min-height: 9rem;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  const modal = document.querySelector('[data-sn-welcome-modal]');
+  const closeButton = document.querySelector('[data-sn-welcome-close]');
+
+  if (modal && closeButton) {
+    const visitedKey = 'sakura_nexus_visited';
+
+    if (window.localStorage.getItem(visitedKey) !== 'true') {
+      modal.hidden = false;
+    }
+
+    closeButton.addEventListener('click', () => {
+      window.localStorage.setItem(visitedKey, 'true');
+      modal.hidden = true;
+    });
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Sakura Nexus home",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Sakura Nexus home"
+    }
+  ]
+}
+{% endschema %}

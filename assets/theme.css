@@ -1,0 +1,84 @@
+/**
+ * Sakura Nexus shared theme styles.
+ *
+ * Component-specific styles can still live in section, block, or snippet
+ * stylesheet tags. Put shared tokens, buttons, headings, and common cards here.
+ */
+
+:root {
+  --sn-pink: #e8a0bf;
+  --sn-pink-strong: #d67ca7;
+  --sn-pink-soft: #fff5f8;
+  --sn-ink: #1f1f1f;
+  --sn-muted: #6b7280;
+  --sn-body: #374151;
+  --sn-line: #e5e7eb;
+  --sn-cream: #faf7f2;
+  --sn-content-width: 80rem;
+  --sn-wide-content-width: calc(100% - 20%);
+  --sn-product-card-gap-max: 1.5rem;
+  --sn-product-card-ratio: 125 / 176;
+  --sn-product-card-image-ratio: 25 / 21;
+  --sn-radius-card: 0.375rem;
+  --sn-radius-media: 0.5rem;
+  --sn-control-height: 3rem;
+}
+
+.sn-eyebrow {
+  color: var(--sn-pink-strong);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.sn-button,
+.sn-card-button {
+  min-height: var(--sn-control-height);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.sn-button:hover,
+.sn-card-button:hover {
+  transform: translateY(-0.0625rem);
+}
+
+.sn-button--primary {
+  min-width: 8.875rem;
+  padding: 0 1.625rem;
+  background: var(--sn-pink);
+  color: #fff;
+}
+
+.sn-button--ghost {
+  min-width: 8.875rem;
+  padding: 0 1.625rem;
+  background: #fff;
+  border: 0.125rem solid var(--sn-pink);
+  color: var(--sn-pink);
+}
+
+.sn-card-button {
+  border: 0.125rem solid var(--sn-pink);
+  color: var(--sn-pink);
+  box-shadow: 0 0.25rem 0.25rem rgba(232, 160, 191, 0.18);
+}
+
+.sn-section-shell {
+  width: 80rem;
+  margin-inline: auto;
+}
+
+.sn-card-surface {
+  border: 0.0625rem solid var(--sn-line);
+  border-radius: var(--sn-radius-card);
+  background: #fff;
+}

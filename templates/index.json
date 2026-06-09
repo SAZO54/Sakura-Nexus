@@ -9,12 +9,135 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "hello-world",
+    "welcome_modal": {
+      "type": "welcome-modal",
+      "settings": {}
+    },
+    "hero": {
+      "type": "hero",
+      "settings": {}
+    },
+    "latest_additions": {
+      "type": "product-carousel-or-grid",
+      "settings": {
+        "eyebrow": "New arrivals",
+        "heading": "Latest Additions",
+        "product_source": "collection",
+        "product_limit": 4,
+        "background_style": "white",
+        "link_url": "/collections/all?sort_by=created-descending",
+        "link_label": "View All ->"
+      }
+    },
+    "featured_products": {
+      "type": "product-carousel-or-grid",
+      "settings": {
+        "eyebrow": "Featured",
+        "heading": "Handpicked by Sakura Nexus",
+        "product_source": "featured_tag",
+        "product_limit": 4,
+        "background_style": "tint",
+        "link_url": "",
+        "link_label": ""
+      }
+    },
+    "collection_links": {
+      "type": "collection-links",
+      "blocks": {
+        "one_piece": {
+          "type": "collection_link",
+          "settings": {
+            "title": "ONE PIECE",
+            "text": "All series goods",
+            "url": "/collections/one-piece",
+            "asset_name": "sakura-collection-one-piece.jpg"
+          }
+        },
+        "zoro": {
+          "type": "collection_link",
+          "settings": {
+            "title": "Zoro Collection",
+            "text": "Fan favourite",
+            "url": "/collections/zoro-collection",
+            "asset_name": "sakura-collection-zoro.jpg"
+          }
+        },
+        "figures": {
+          "type": "collection_link",
+          "settings": {
+            "title": "Figures",
+            "text": "Scale & prize figs",
+            "url": "/collections/figures",
+            "asset_name": "sakura-collection-figures.jpg"
+          }
+        },
+        "acrylic": {
+          "type": "collection_link",
+          "settings": {
+            "title": "Acrylic Stands",
+            "text": "Desktop decor",
+            "url": "/collections/acrylic-stands",
+            "asset_name": "sakura-collection-acrylic.jpg"
+          }
+        },
+        "badges": {
+          "type": "collection_link",
+          "settings": {
+            "title": "Badges & Cards",
+            "text": "Pin & card sets",
+            "url": "/collections/badges",
+            "asset_name": "sakura-collection-badges.jpg"
+          }
+        }
+      },
+      "block_order": [
+        "one_piece",
+        "zoro",
+        "figures",
+        "acrylic",
+        "badges"
+      ],
+      "settings": {}
+    },
+    "about": {
+      "type": "about-banner",
+      "blocks": {
+        "authentic": {
+          "type": "stat",
+          "settings": {
+            "value": "100%",
+            "label": "Authentic Goods"
+          }
+        },
+        "japan": {
+          "type": "stat",
+          "settings": {
+            "value": "Japan",
+            "label": "Ships From"
+          }
+        },
+        "worldwide": {
+          "type": "stat",
+          "settings": {
+            "value": "Worldwide",
+            "label": "Delivery"
+          }
+        }
+      },
+      "block_order": [
+        "authentic",
+        "japan",
+        "worldwide"
+      ],
       "settings": {}
     }
   },
   "order": [
-    "main"
+    "welcome_modal",
+    "hero",
+    "latest_additions",
+    "featured_products",
+    "collection_links",
+    "about"
   ]
 }

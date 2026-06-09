@@ -1,0 +1,95 @@
+{% doc %}
+  Renders a Sakura Nexus product condition badge.
+
+  The condition is read from `product.metafields.custom.condition`, then falls
+  back to the existing condition tags used by this theme.
+
+  @param {product} product - Product used to resolve the condition
+  @param {string} [class] - Base CSS class for the badge
+
+  @example
+  {% render 'sn-condition-badge', product: product, class: 'sn-condition-badge' %}
+{% enddoc %}
+
+{% liquid
+  assign badge_class = class | default: 'sn-condition-badge'
+  assign condition = product.metafields.custom.condition.value | default: product.metafields.custom.condition
+  assign condition_label = condition | default: 'New'
+  assign condition_handle = condition_label | handleize
+
+  if condition == blank
+    if product.tags contains 'condition_opened'
+      assign condition_label = 'Like New'
+      assign condition_handle = 'opened'
+    elsif product.tags contains 'condition_used'
+      assign condition_label = 'Good'
+      assign condition_handle = 'used'
+    else
+      assign condition_label = 'New'
+      assign condition_handle = 'new'
+    endif
+  endif
+%}
+
+<span class="{{ badge_class }} {{ badge_class }}--{{ condition_handle }}">{{ condition_label }}</span>
+
+{% stylesheet %}
+  .sn-condition-badge,
+  .sn-product-badge,
+  .sn-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    min-height: 1.562rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.625rem;
+    border-radius: 0.375rem;
+    background: #e8a1bf;
+    color: #fff;
+    font-size: 0.6875rem;
+    line-height: 1;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .sn-product-badge {
+    top: 2.25rem;
+    left: 2.25rem;
+  }
+
+  .sn-condition-badge--like-new,
+  .sn-condition-badge--opened,
+  .sn-product-badge--like-new,
+  .sn-product-badge--opened,
+  .sn-badge--like-new,
+  .sn-badge--opened {
+    background: #f4c7d9;
+    color: #7a294d;
+  }
+
+  .sn-condition-badge--good,
+  .sn-condition-badge--used,
+  .sn-product-badge--good,
+  .sn-product-badge--used,
+  .sn-badge--good,
+  .sn-badge--used {
+    background: #7c9f32;
+    color: #fff;
+  }
+
+  .sn-condition-badge--very-good,
+  .sn-product-badge--very-good,
+  .sn-badge--very-good {
+    background: #cee8ce;
+    color: #215a21;
+  }
+
+  .sn-condition-badge--new,
+  .sn-product-badge--new,
+  .sn-badge--new {
+    background: #e8a1bf;
+    color: #fff;
+  }
+{% endstylesheet %}

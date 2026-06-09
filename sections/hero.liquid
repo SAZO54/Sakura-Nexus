@@ -1,0 +1,288 @@
+<section class="sn-hero full-width">
+  <div class="sn-hero__inner">
+    <div class="sn-hero__copy">
+      {% if section.settings.eyebrow != blank %}
+        <p class="sn-eyebrow">{{ section.settings.eyebrow }}</p>
+      {% endif %}
+      <h1>{{ section.settings.heading }}</h1>
+      {% if section.settings.text != blank %}
+        <p class="sn-hero__lead">{{ section.settings.text }}</p>
+      {% endif %}
+
+      <div class="sn-actions">
+        {% if section.settings.primary_url != blank %}
+          <a class="sn-button sn-button--primary" href="{{ section.settings.primary_url }}">
+            {{ section.settings.primary_label }}
+          </a>
+        {% endif %}
+        {% if section.settings.secondary_url != blank %}
+          <a class="sn-button sn-button--ghost" href="{{ section.settings.secondary_url }}">
+            {{ section.settings.secondary_label }}
+          </a>
+        {% endif %}
+      </div>
+
+      {% if section.settings.trust_items != blank %}
+        {% assign trust_items = section.settings.trust_items | split: ',' %}
+        <ul class="sn-trust" aria-label="Store highlights">
+          {% for item in trust_items %}
+            <li>{{ item | strip }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+
+    <div class="sn-hero__media">
+      {% if section.settings.image %}
+        {{ section.settings.image | image_url: width: 1044 | image_tag: loading: 'eager', alt: section.settings.image.alt | default: section.settings.heading }}
+      {% else %}
+        <img
+          src="{{ 'sakura-hero.jpg' | asset_url }}"
+          alt="Sakura Nexus hero"
+          width="522"
+          height="715"
+          loading="eager"
+        >
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .sn-hero {
+    --sn-pink: #e8a0bf;
+    --sn-pink-strong: #d67ca7;
+    --sn-ink: #1f1f1f;
+    --sn-muted: #6b7280;
+    --sn-cream: #faf7f2;
+    --sn-content-width: 80rem;
+    position: relative;
+    overflow: hidden;
+    background: var(--sn-cream);
+    color: var(--sn-ink);
+    font-family: var(--font-primary--family);
+  }
+
+  .sn-hero a {
+    text-decoration: none;
+  }
+
+  .sn-hero .sn-eyebrow {
+    color: var(--sn-pink-strong);
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .sn-hero::after {
+    content: '';
+    position: absolute;
+    width: 33.75rem;
+    height: 33.75rem;
+    top: -2.5rem;
+    right: 6rem;
+    border-radius: 62.44rem;
+    background: rgba(232, 160, 191, 0.13);
+    pointer-events: none;
+  }
+
+  .sn-hero__inner {
+    position: relative;
+    z-index: 1;
+    width: min(calc(100% - 2.5rem), var(--sn-content-width));
+    min-height: 42.5rem;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 26.25rem;
+    align-items: center;
+    gap: 5.75rem;
+  }
+
+  .sn-hero h1 {
+    max-width: 36.25rem;
+    margin-top: 1.125rem;
+    font-size: 3.625rem;
+    line-height: 1.03;
+    font-weight: 900;
+  }
+
+  .sn-hero__lead {
+    max-width: 33.75rem;
+    margin-top: 1.5rem;
+    color: #374151;
+    font-size: 1.062rem;
+    line-height: 1.45;
+  }
+
+  .sn-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.875rem;
+  }
+
+  .sn-button,
+  .sn-card-button {
+    min-height: 3rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    transition: transform 160ms ease, box-shadow 160ms ease;
+  }
+
+  .sn-button:hover,
+  .sn-card-button:hover {
+    transform: translateY(-0.0625rem);
+  }
+
+  .sn-button--primary {
+    min-width: 8.875rem;
+    padding: 0 1.625rem;
+    background: var(--sn-pink);
+    color: #fff;
+  }
+
+  .sn-button--ghost {
+    min-width: 8.875rem;
+    padding: 0 1.625rem;
+    background: #fff;
+    border: 0.125rem solid var(--sn-pink);
+    color: var(--sn-pink);
+  }
+
+  .sn-trust {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.75rem;
+    margin: 1.75rem 0 0;
+    padding: 0;
+    list-style: none;
+    color: var(--sn-muted);
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .sn-trust li::before {
+    content: '\2713';
+    margin-right: 0.5rem;
+    color: var(--sn-pink);
+  }
+
+  .sn-hero__media {
+    position: relative;
+    z-index: 1;
+    aspect-ratio: 522 / 715;
+    overflow: hidden;
+    border-radius: 1.75rem;
+  }
+
+  .sn-hero__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 68.75rem) {
+    .sn-hero__inner {
+      grid-template-columns: minmax(0, 1fr) 21.25rem;
+      gap: 3rem;
+    }
+
+    .sn-hero h1 {
+      font-size: 2.875rem;
+    }
+  }
+
+  @media (max-width: 45rem) {
+    .sn-hero__inner {
+      min-height: auto;
+      padding-block: 3.5rem;
+      grid-template-columns: 1fr;
+    }
+
+    .sn-hero::after {
+      right: -11.25rem;
+      top: 5rem;
+    }
+
+    .sn-hero h1 {
+      font-size: 2.5rem;
+    }
+
+    .sn-hero__lead {
+      font-size: 1rem;
+    }
+
+    .sn-hero__media {
+      max-height: 26.25rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Hero",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Authentic anime goods from Japan"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Discover Japan's Finest Anime Collectibles"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Carefully selected ONE PIECE figures, badges and rare goods from personal collections in Japan, shipped worldwide."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "url",
+      "id": "primary_url",
+      "label": "Primary URL"
+    },
+    {
+      "type": "text",
+      "id": "primary_label",
+      "label": "Primary label",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "secondary_url",
+      "label": "Secondary URL"
+    },
+    {
+      "type": "text",
+      "id": "secondary_label",
+      "label": "Secondary label",
+      "default": "View FAQ"
+    },
+    {
+      "type": "text",
+      "id": "trust_items",
+      "label": "Trust items",
+      "default": "100% Authentic, Ships from Japan, Secure Payment"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero"
+    }
+  ]
+}
+{% endschema %}

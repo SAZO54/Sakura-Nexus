@@ -1,0 +1,179 @@
+<div
+  class="sn-welcome-modal"
+  data-sn-welcome-modal
+  data-sn-welcome-key="{{ section.settings.storage_key | escape }}"
+  hidden
+>
+  <div class="sn-welcome-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="sn-welcome-title-{{ section.id }}">
+    <div class="sn-welcome-modal__accent"></div>
+    {% if section.settings.mark != blank %}
+      <p class="sn-welcome-modal__mark" aria-hidden="true">{{ section.settings.mark }}</p>
+    {% endif %}
+    <h2 id="sn-welcome-title-{{ section.id }}">{{ section.settings.heading }}</h2>
+    {% if section.settings.subtitle != blank %}
+      <p class="sn-welcome-modal__subtitle">{{ section.settings.subtitle }}</p>
+    {% endif %}
+    {% if section.settings.text != blank %}
+      <p class="sn-welcome-modal__body">{{ section.settings.text }}</p>
+    {% endif %}
+    <button class="sn-button sn-button--primary" type="button" data-sn-welcome-close>
+      {{ section.settings.button_label }}
+    </button>
+  </div>
+</div>
+
+{% stylesheet %}
+  .sn-welcome-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 1.5rem;
+    background: rgba(31, 31, 31, 0.48);
+    font-family: var(--font-primary--family);
+  }
+
+  .sn-welcome-modal[hidden] {
+    display: none;
+  }
+
+  .sn-welcome-modal__dialog {
+    position: relative;
+    width: min(30rem, 100%);
+    overflow: hidden;
+    padding: 2rem 2.5rem 1.875rem;
+    border-radius: 0.5rem;
+    background: #fff;
+    color: #1f1f1f;
+    text-align: center;
+    box-shadow: 0 1.5rem 4.375rem rgba(31, 31, 31, 0.22);
+  }
+
+  .sn-welcome-modal__accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 0.5rem;
+    background: #e8a0bf;
+  }
+
+  .sn-welcome-modal__mark {
+    margin-top: 0;
+    color: #e8a0bf;
+    font-size: 0.8125rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .sn-welcome-modal h2 {
+    margin-top: 1.125rem;
+    font-size: 1.75rem;
+    line-height: 1.2;
+    font-weight: 800;
+  }
+
+  .sn-welcome-modal__subtitle {
+    margin-top: 0.75rem;
+    color: #d67ca7;
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  .sn-welcome-modal__body {
+    margin: 1.75rem auto 0;
+    max-width: 22.5rem;
+    color: #374151;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  .sn-welcome-modal .sn-button {
+    width: min(22.5rem, 100%);
+    margin-top: 2rem;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .sn-welcome-modal .sn-button--primary {
+    min-height: 3rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1.625rem;
+    border-radius: 0.375rem;
+    background: #e8a0bf;
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  document.querySelectorAll('[data-sn-welcome-modal]').forEach((modal) => {
+    const closeButton = modal.querySelector('[data-sn-welcome-close]');
+    const visitedKey = modal.dataset.snWelcomeKey || 'sakura_nexus_visited';
+
+    if (!closeButton) return;
+
+    if (window.localStorage.getItem(visitedKey) !== 'true') {
+      modal.hidden = false;
+    }
+
+    closeButton.addEventListener('click', () => {
+      window.localStorage.setItem(visitedKey, 'true');
+      modal.hidden = true;
+    });
+  });
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Welcome modal",
+  "settings": [
+    {
+      "type": "text",
+      "id": "mark",
+      "label": "Mark",
+      "default": "Sakura"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Welcome to Sakura Nexus"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Authentic Anime Goods from Japan"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Discover carefully selected Japanese anime collectibles from personal collections in Japan."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Enter Store"
+    },
+    {
+      "type": "text",
+      "id": "storage_key",
+      "label": "Browser storage key",
+      "default": "sakura_nexus_visited"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Welcome modal"
+    }
+  ]
+}
+{% endschema %}
