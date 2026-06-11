@@ -23,7 +23,7 @@
         "eyebrow": "New arrivals",
         "heading": "Latest Additions",
         "product_source": "collection",
-        "product_limit": 4,
+        "product_limit": 8,
         "background_style": "white",
         "link_url": "/collections/all?sort_by=created-descending",
         "link_label": "View All ->"
@@ -35,7 +35,7 @@
         "eyebrow": "Featured",
         "heading": "Handpicked by Sakura Nexus",
         "product_source": "featured_tag",
-        "product_limit": 4,
+        "product_limit": 8,
         "background_style": "tint",
         "link_url": "",
         "link_label": ""

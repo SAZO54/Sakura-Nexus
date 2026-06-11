@@ -53,7 +53,7 @@
     </div>
 
     <div class="sn-product-grid">
-      {% for product in collections.all.products limit: 4 %}
+      {% for product in collections.all.products limit: 8 %}
         {% liquid
           assign condition = product.metafields.custom.condition.value | default: product.metafields.custom.condition
           if condition == blank
@@ -95,7 +95,7 @@
       {% assign featured_count = 0 %}
       {% for product in collections.all.products limit: 12 %}
         {% if product.tags contains 'featured' %}
-          {% if featured_count < 4 %}
+          {% if featured_count < 8 %}
             {% assign featured_count = featured_count | plus: 1 %}
             {% liquid
               assign condition = product.metafields.custom.condition.value | default: product.metafields.custom.condition
@@ -126,7 +126,7 @@
         {% endif %}
       {% endfor %}
       {% if featured_count == 0 %}
-        {% for product in collections.all.products limit: 4 offset: 4 %}
+        {% for product in collections.all.products limit: 8 offset: 8 %}
           {% liquid
             assign condition = product.metafields.custom.condition.value | default: product.metafields.custom.condition
             if condition == blank
@@ -165,32 +165,32 @@
       </div>
     </div>
 
-    <div class="sn-collection-grid">
-      <a class="sn-collection-card" href="{{ routes.collections_url }}/one-piece">
+    <div class="sn-home-collection-grid">
+      <a class="sn-home-collection-card" href="{{ routes.collections_url }}/one-piece">
         <img src="{{ 'sakura-collection-one-piece.jpg' | asset_url }}" alt="" width="205" height="160" loading="lazy">
         <strong>ONE PIECE</strong>
         <span>All series goods</span>
         <b>&rarr;</b>
       </a>
-      <a class="sn-collection-card" href="{{ routes.collections_url }}/zoro-collection">
+      <a class="sn-home-collection-card" href="{{ routes.collections_url }}/zoro-collection">
         <img src="{{ 'sakura-collection-zoro.jpg' | asset_url }}" alt="" width="205" height="160" loading="lazy">
         <strong>Zoro Collection</strong>
         <span>Fan favourite</span>
         <b>&rarr;</b>
       </a>
-      <a class="sn-collection-card" href="{{ routes.collections_url }}/figures">
+      <a class="sn-home-collection-card" href="{{ routes.collections_url }}/figures">
         <img src="{{ 'sakura-collection-figures.jpg' | asset_url }}" alt="" width="205" height="160" loading="lazy">
         <strong>Figures</strong>
         <span>Scale & prize figs</span>
         <b>&rarr;</b>
       </a>
-      <a class="sn-collection-card" href="{{ routes.collections_url }}/acrylic-stands">
+      <a class="sn-home-collection-card" href="{{ routes.collections_url }}/acrylic-stands">
         <img src="{{ 'sakura-collection-acrylic.jpg' | asset_url }}" alt="" width="205" height="160" loading="lazy">
         <strong>Acrylic Stands</strong>
         <span>Desktop decor</span>
         <b>&rarr;</b>
       </a>
-      <a class="sn-collection-card" href="{{ routes.collections_url }}/badges">
+      <a class="sn-home-collection-card" href="{{ routes.collections_url }}/badges">
         <img src="{{ 'sakura-collection-badges.jpg' | asset_url }}" alt="" width="205" height="160" loading="lazy">
         <strong>Badges & Cards</strong>
         <span>Pin & card sets</span>
@@ -502,13 +502,15 @@
     width: var(--sn-wide-content-width);
     margin: 0 auto;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: min(var(--sn-product-card-gap-max, 1.5rem), 4vw);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--sn-product-card-min-width, 14.7rem)), 1fr));
+    gap: var(--sn-product-card-gap, 1.5rem);
+    justify-content: stretch;
+    justify-items: stretch;
   }
 
   .sn-product-card {
     width: 100%;
-    max-width: 100%;
+    max-width: var(--sn-product-card-max-width, 18.75rem);
     aspect-ratio: var(--sn-product-card-ratio, 125 / 176);
     min-width: 0;
     overflow: hidden;
@@ -600,7 +602,7 @@
     padding-block: 4.625rem 5.125rem;
   }
 
-  .sn-collection-grid {
+  .sn-home-collection-grid {
     width: var(--sn-wide-content-width);
     margin: 0 auto;
     display: grid;
@@ -608,7 +610,7 @@
     gap: 1.5rem;
   }
 
-  .sn-collection-card {
+  .sn-home-collection-card {
     position: relative;
     min-height: 10rem;
     overflow: hidden;
@@ -618,7 +620,7 @@
     background: #fff5f8;
   }
 
-  .sn-collection-card img {
+  .sn-home-collection-card img {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -627,32 +629,32 @@
     opacity: 0.9;
   }
 
-  .sn-collection-card::after {
+  .sn-home-collection-card::after {
     content: '';
     position: absolute;
     inset: 0;
     background: linear-gradient(90deg, rgba(255, 245, 248, 0.96), rgba(255, 245, 248, 0.72) 52%, rgba(255, 245, 248, 0.14));
   }
 
-  .sn-collection-card strong,
-  .sn-collection-card span,
-  .sn-collection-card b {
+  .sn-home-collection-card strong,
+  .sn-home-collection-card span,
+  .sn-home-collection-card b {
     position: relative;
     z-index: 1;
     display: block;
   }
 
-  .sn-collection-card strong {
+  .sn-home-collection-card strong {
     font-size: 0.9375rem;
   }
 
-  .sn-collection-card span {
+  .sn-home-collection-card span {
     margin-top: 0.75rem;
     color: var(--sn-muted);
     font-size: 0.75rem;
   }
 
-  .sn-collection-card b {
+  .sn-home-collection-card b {
     position: absolute;
     right: 1.25rem;
     bottom: 1.5rem;
@@ -761,7 +763,7 @@
     .sn-hero__inner,
     .sn-section-heading,
     .sn-product-grid,
-    .sn-collection-grid,
+    .sn-home-collection-grid,
     .sn-faq-cta h2,
     .sn-faq-cta p {
       width: calc(100% - 4rem);
@@ -776,11 +778,7 @@
       font-size: 2.875rem;
     }
 
-    .sn-product-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .sn-collection-grid {
+    .sn-home-collection-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
@@ -800,7 +798,7 @@
     .sn-hero__inner,
     .sn-section-heading,
     .sn-product-grid,
-    .sn-collection-grid,
+    .sn-home-collection-grid,
     .sn-faq-cta h2,
     .sn-faq-cta p {
       width: calc(100% - 2.5rem);
@@ -847,9 +845,13 @@
     }
 
     .sn-product-grid,
-    .sn-collection-grid,
+    .sn-home-collection-grid,
     .sn-stats {
       grid-template-columns: 1fr;
+    }
+
+    .sn-product-grid {
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .sn-about__copy,
@@ -857,7 +859,7 @@
       width: calc(100% - 2.5rem);
     }
 
-    .sn-collection-card {
+    .sn-home-collection-card {
       min-height: 9rem;
     }
   }

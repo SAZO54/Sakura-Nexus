@@ -194,6 +194,7 @@
     --sn-body: #384052;
     --sn-line: #e5e8eb;
     --sn-cream: #faf7f2;
+    --sn-listing-card-min-width: 13rem;
     font-family: var(--font-primary--family);
     color: var(--sn-ink);
     background: #fff;
@@ -306,14 +307,16 @@
 
   .sn-filter-group {
     margin: 1rem 0 0;
-    padding: 1rem 0 0;
+    padding: 0;
     border: 0;
-    border-top: 0.0625rem solid var(--sn-line);
   }
 
   .sn-filter-group legend,
   .sn-filter-group h3 {
+    width: 100%;
     margin-bottom: 0.75rem;
+    padding: 1rem 0 0.75rem;
+    border-bottom: 0.0625rem solid var(--sn-line);
     font-size: 1rem;
     line-height: 1.2;
     font-weight: 700;
@@ -395,15 +398,18 @@
   }
 
   .sn-collection-grid {
+    width: 100%;
+    margin: 3rem 0 0;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: min(var(--sn-product-card-gap-max, 1.5rem), 4vw);
-    margin-top: 3rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--sn-listing-card-min-width, 13rem)), 1fr));
+    gap: var(--sn-product-card-gap, 1.5rem);
+    justify-content: stretch;
+    justify-items: stretch;
   }
 
   .sn-listing-card {
     width: 100%;
-    max-width: 100%;
+    max-width: none;
     aspect-ratio: var(--sn-product-card-ratio, 125 / 176);
     display: flex;
     flex-direction: column;
@@ -592,24 +598,18 @@
     font-weight: 700;
   }
 
-  @media (max-width: 73.75rem) {
+  @media (max-width: 64rem) {
     .sn-collection-hero__inner,
     .sn-collection-layout {
       width: calc(100% - 4rem);
     }
-  }
 
-  @media (max-width: 61.25rem) {
     .sn-collection-layout {
       grid-template-columns: 1fr;
     }
 
     .sn-filter-panel {
       position: static;
-    }
-
-    .sn-collection-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
@@ -638,7 +638,7 @@
     }
 
     .sn-collection-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 {% endstylesheet %}
