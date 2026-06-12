@@ -62,6 +62,9 @@
         <div class="sn-product-info">
           <p class="sn-product-series">{{ series }} &middot; {{ item_type }} &middot; Ships from Japan</p>
           <h1>{{ product.title | escape }}</h1>
+          <div class="sn-product-condition-row">
+            {% render 'sn-condition-badge', product: product, class: 'sn-product-info-badge' %}
+          </div>
           <p class="sn-product-price">{{ current_variant.price | money }}</p>
           <p class="sn-product-stock">
             {% if current_variant.available %}
@@ -105,50 +108,56 @@
             </div>
           {% endform %}
 
+          <button
+            class="sn-save-product"
+            type="button"
+            aria-pressed="false"
+            data-sn-save-product
+            data-product-id="{{ product.id }}"
+          >
+            <span aria-hidden="true">♡</span>
+            <span>Save item</span>
+          </button>
+
+          <div class="sn-description-card">
+            <h2>Description</h2>
+            {% if product.description != blank %}
+              <div class="sn-rte">{{ product.description }}</div>
+            {% else %}
+              <p>Official Japanese collectible.</p>
+              <p>Condition: {{ condition }}</p>
+              <p>Notes: {{ item_notes }}</p>
+              <p>Shipping: Ships from Japan.</p>
+            {% endif %}
+          </div>
+
           <div class="sn-trust-notes">
             <p>100% Authentic</p>
             <p>Ships from Japan</p>
             <p>Secure Payment</p>
             <span>Import duties may apply depending on your country.</span>
           </div>
+
+          <div class="sn-condition-info">
+            <div class="sn-condition-info__intro">
+              <p class="sn-eyebrow">Product details</p>
+              <h2>Condition & item information</h2>
+              <p>Official Japanese anime collectible sourced from a personal collection in Japan. Please review all photos and condition details before purchasing.</p>
+            </div>
+
+            <dl class="sn-spec-card">
+              <div><dt>Series</dt><dd>{{ series }}</dd></div>
+              <div><dt>Character</dt><dd>{{ character }}</dd></div>
+              <div><dt>Item Type</dt><dd>{{ item_type }}</dd></div>
+              <div><dt>Condition</dt><dd>{{ condition }}</dd></div>
+              <div><dt>Region</dt><dd>{{ release_region }}</dd></div>
+              <div><dt>Notes</dt><dd>{{ item_notes }}</dd></div>
+            </dl>
+          </div>
         </div>
       </div>
     </div>
   </div>
-
-  <section class="sn-product-details">
-    <div class="sn-product-details__intro">
-      <p class="sn-eyebrow">Product details</p>
-      <h2>Condition & item information</h2>
-      <p>Official Japanese anime collectible sourced from a personal collection in Japan. Please review all photos and condition details before purchasing.</p>
-    </div>
-
-    <dl class="sn-spec-card">
-      <div><dt>Series</dt><dd>{{ series }}</dd></div>
-      <div><dt>Character</dt><dd>{{ character }}</dd></div>
-      <div><dt>Item Type</dt><dd>{{ item_type }}</dd></div>
-      <div><dt>Condition</dt><dd>{{ condition }}</dd></div>
-      <div><dt>Region</dt><dd>{{ release_region }}</dd></div>
-      <div><dt>Notes</dt><dd>{{ item_notes }}</dd></div>
-    </dl>
-
-    <div class="sn-description-card">
-      <h3>Description template</h3>
-      {% if product.description != blank %}
-        <div class="sn-rte">{{ product.description }}</div>
-      {% else %}
-        <p>Official Japanese collectible.</p>
-        <p>Condition: {{ condition }}</p>
-        <p>Notes: {{ item_notes }}</p>
-        <p>Shipping: Ships from Japan.</p>
-      {% endif %}
-    </div>
-
-    <div class="sn-shipping-card">
-      <h3>Shipping & customs</h3>
-      <p>Items are shipped from Japan. Tracking availability and delivery time depend on destination country. Import duties, taxes, and customs fees may be charged by your country and are the buyer's responsibility.</p>
-    </div>
-  </section>
 
   <section class="sn-reviews">
     <div class="sn-reviews__inner">
@@ -270,19 +279,19 @@
     --sn-body: #384052;
     --sn-line: #e5e8eb;
     --sn-cream: #faf7f2;
+    --sn-listing-card-min-width: 13rem;
     font-family: var(--font-primary--family);
     color: var(--sn-ink);
     background: #fff;
   }
 
   .sn-product-page a {
-    color: inherit;
     text-decoration: none;
   }
 
   .sn-product-hero {
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     background: var(--sn-cream);
   }
 
@@ -308,16 +317,32 @@
   .sn-product-breadcrumb {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 0.5625rem;
     color: var(--sn-muted);
     font-size: 0.8125rem;
+    line-height: 1;
+  }
+
+  .sn-product-breadcrumb a,
+  .sn-product-breadcrumb span {
+    min-height: 1rem;
+    display: inline-flex;
+    align-items: center;
   }
 
   .sn-product-top {
     display: grid;
-    grid-template-columns: minmax(0, 33.5rem) minmax(0, 35.38rem);
-    gap: 2.125rem;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: min(4rem, 4vw);
     margin-top: 1.625rem;
+    align-items: start;
+  }
+
+  .sn-product-gallery {
+    position: sticky;
+    top: 2rem;
+    align-self: start;
   }
 
   .sn-product-gallery__main {
@@ -405,7 +430,7 @@
   }
 
   .sn-product-info {
-    padding: 1.125rem;
+    padding: 1.5rem;
     border: 0.0625rem solid var(--sn-line);
     border-radius: 0.75rem;
     background: #fff;
@@ -427,8 +452,44 @@
     font-weight: 800;
   }
 
+  .sn-product-condition-row {
+    margin-top: 1.25rem;
+  }
+
+  .sn-product-info-badge {
+    min-height: 1.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.75rem;
+    border-radius: 0.375rem;
+    background: var(--sn-pink);
+    color: #fff;
+    font-size: 0.75rem;
+    line-height: 1;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .sn-product-info-badge--like-new,
+  .sn-product-info-badge--opened {
+    background: #f4c7d9;
+    color: #7a294d;
+  }
+
+  .sn-product-info-badge--good,
+  .sn-product-info-badge--used {
+    background: #7c9f32;
+    color: #fff;
+  }
+
+  .sn-product-info-badge--very-good {
+    background: #cee8ce;
+    color: #215a21;
+  }
+
   .sn-product-price {
-    margin-top: 3rem;
+    margin-top: 1.25rem;
     font-size: 2.125rem;
     line-height: 1.2;
     font-weight: 800;
@@ -442,7 +503,7 @@
   }
 
   .sn-product-form {
-    margin-top: 2.75rem;
+    margin-top: 2rem;
   }
 
   .sn-variant-label,
@@ -499,7 +560,7 @@
     background: var(--sn-pink);
     color: #fff;
     font-family: inherit;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 800;
     cursor: pointer;
   }
@@ -520,8 +581,33 @@
     border-radius: 0.375rem !important;
     background: #fff !important;
     color: var(--sn-pink) !important;
-    font-size: 1.25rem !important;
+    font-size: 1.1rem !important;
     font-weight: 800 !important;
+  }
+
+  .sn-save-product {
+    width: 100%;
+    min-height: 3.375rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    margin-top: 0.875rem;
+    border: 0.0625rem solid var(--sn-pink);
+    border-radius: 0.375rem;
+    background: #fff;
+    color: var(--sn-pink);
+    font-family: inherit;
+    font-size: 1.1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+  }
+
+  .sn-save-product[aria-pressed="true"] {
+    border-color: var(--sn-pink);
+    background: var(--sn-pink-soft);
+    color: var(--sn-pink-strong);
   }
 
   .sn-trust-notes {
@@ -552,32 +638,11 @@
     font-size: 0.75rem;
   }
 
-  .sn-product-details {
-    width: var(--sn-wide-content-width);
-    margin: 0 auto;
-    padding: 3.5rem 0 4.5rem;
-    display: grid;
-    grid-template-columns: minmax(0, 35rem) minmax(0, 30.5rem);
-    gap: 2.625rem 5.5rem;
-  }
-
-  .sn-product-details__intro h2 {
-    margin-top: 0.75rem;
-    font-size: 1.875rem;
-    line-height: 1.2;
-  }
-
-  .sn-product-details__intro p:not(.sn-eyebrow) {
-    margin-top: 0.875rem;
-    color: var(--sn-body);
-    font-size: 0.9375rem;
-    line-height: 1.55;
-  }
-
   .sn-spec-card {
     display: grid;
     gap: 0;
-    padding: 1.5rem;
+    margin-top: 1rem;
+    padding: 1.125rem;
     border: 0.0625rem solid var(--sn-line);
     border-radius: 0.375rem;
     background: #fff;
@@ -601,38 +666,26 @@
   }
 
   .sn-description-card,
-  .sn-shipping-card {
-    padding: 1.5rem;
-    border: 0.0625rem solid var(--sn-line);
-    border-radius: 0.375rem;
-    background: var(--sn-pink-soft);
+  .sn-condition-info {
+    margin-top: 1.75rem;
   }
 
   .sn-description-card {
-    min-height: 18.75rem;
+    min-height: 0;
   }
 
-  .sn-shipping-card {
-    align-self: end;
-    min-height: 9.75rem;
-  }
-
-  .sn-description-card h3,
-  .sn-shipping-card h3 {
+  .sn-description-card h2,
+  .sn-condition-info h2 {
     font-size: 1.125rem;
   }
 
   .sn-description-card p,
-  .sn-shipping-card p,
+  .sn-condition-info__intro p:not(.sn-eyebrow),
   .sn-rte {
     margin-top: 0.875rem;
     color: var(--sn-body);
     font-size: 0.875rem;
     line-height: 1.55;
-  }
-
-  .sn-reviews {
-    background: var(--sn-cream);
   }
 
   .sn-reviews__inner {
@@ -775,13 +828,14 @@
     border: 0.0625rem solid var(--sn-pink);
     border-radius: 0.375rem;
     color: var(--sn-pink);
+    background-color: #fff;
     font-size: 0.8125rem;
     font-weight: 800;
   }
 
   .sn-related {
     padding: 4rem 0 3.375rem;
-    background: #fff;
+    background: var(--sn-cream);
   }
 
   .sn-related__heading,
@@ -810,13 +864,19 @@
 
   .sn-related-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1.625rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--sn-listing-card-min-width, 13rem)), 1fr));
+    gap: var(--sn-product-card-gap, 1.5rem);
+    justify-content: stretch;
+    justify-items: stretch;
     margin-top: 2.125rem;
   }
 
   .sn-related-card {
-    display: block;
+    width: 100%;
+    max-width: none;
+    aspect-ratio: var(--sn-product-card-ratio, 125 / 176);
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
     border: 0.0625rem solid var(--sn-line);
     border-radius: 0.375rem;
@@ -827,7 +887,8 @@
 
   .sn-related-card__image {
     position: relative;
-    height: 13.12rem;
+    flex: 0 0 auto;
+    aspect-ratio: var(--sn-product-card-image-ratio, 25 / 21);
     display: block;
     overflow: hidden;
     background: #f4f4f5;
@@ -845,11 +906,13 @@
     margin: 1.125rem 1.125rem 0;
     font-size: 0.875rem;
     line-height: 1.35;
+    font-weight: 700;
   }
 
   .sn-related-card__price {
     margin: 0.75rem 1.125rem 0;
     font-size: 1.25rem;
+    line-height: 1.2;
     font-weight: 800;
   }
 
@@ -859,27 +922,9 @@
     font-size: 0.75rem;
   }
 
-  .sn-related-card .sn-card-button {
-    width: calc(100% - 2.25rem);
-    margin: 2.625rem 1.125rem 1.25rem;
-  }
-
-  .sn-card-button {
-    min-height: 3rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 0.125rem solid var(--sn-pink);
-    border-radius: 0.375rem;
-    color: var(--sn-pink);
-    font-size: 0.875rem;
-    font-weight: 800;
-    box-shadow: 0 0.25rem 0.25rem rgba(232, 160, 191, 0.18);
-  }
-
   .sn-product-faq {
     padding: 3.625rem 1.25rem 3.375rem;
-    background: var(--sn-cream);
+    background: #fff;
     text-align: center;
   }
 
@@ -909,34 +954,25 @@
 
   @media (max-width: 73.75rem) {
     .sn-product-hero__inner,
-    .sn-product-details,
     .sn-reviews__inner,
     .sn-related__heading,
     .sn-related-grid {
       width: calc(100% - 4rem);
     }
 
-    .sn-product-top,
-    .sn-product-details {
+    .sn-product-top {
       grid-template-columns: 1fr;
     }
 
     .sn-product-gallery {
+      position: static;
       max-width: 38.75rem;
     }
 
-    .sn-shipping-card {
-      align-self: stretch;
-    }
-
-    .sn-related-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
   }
 
   @media (max-width: 45rem) {
     .sn-product-hero__inner,
-    .sn-product-details,
     .sn-reviews__inner,
     .sn-related__heading,
     .sn-related-grid {
@@ -955,6 +991,10 @@
     .sn-review-grid,
     .sn-related-grid {
       grid-template-columns: 1fr;
+    }
+
+    .sn-related-grid {
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .sn-review-summary,
@@ -982,6 +1022,7 @@
   const plusButton = document.querySelector('[data-sn-quantity-plus]');
   const mainImage = document.querySelector('.sn-product-gallery__main img');
   const thumbs = document.querySelectorAll('[data-sn-product-thumb]');
+  const saveButton = document.querySelector('[data-sn-save-product]');
 
   if (quantityInput && minusButton && plusButton) {
     minusButton.addEventListener('click', () => {
@@ -1002,6 +1043,37 @@
         thumbs.forEach((item) => item.classList.remove('is-active'));
         thumb.classList.add('is-active');
       });
+    });
+  }
+
+  if (saveButton) {
+    const key = `sn_saved_product_${saveButton.dataset.productId}`;
+    const label = saveButton.querySelector('span:last-child');
+    const icon = saveButton.querySelector('span:first-child');
+
+    const syncSavedState = (saved) => {
+      saveButton.setAttribute('aria-pressed', String(saved));
+      if (label) label.textContent = saved ? 'Saved' : 'Save item';
+      if (icon) icon.textContent = saved ? '♥' : '♡';
+    };
+
+    let isSaved = false;
+    try {
+      isSaved = localStorage.getItem(key) === 'true';
+    } catch (error) {
+      isSaved = false;
+    }
+
+    syncSavedState(isSaved);
+
+    saveButton.addEventListener('click', () => {
+      const nextSaved = saveButton.getAttribute('aria-pressed') !== 'true';
+      try {
+        localStorage.setItem(key, String(nextSaved));
+      } catch (error) {
+        // Keep the visual toggle even when persistent storage is unavailable.
+      }
+      syncSavedState(nextSaved);
     });
   }
 {% endjavascript %}

@@ -50,9 +50,9 @@
   }
 
   .sn-footer__inner {
-    max-width: 80rem;
+    width: var(--sn-wide-content-width);
     margin: 0 auto;
-    padding: 4rem 4.5rem 1.75rem;
+    padding: 4rem 0 1.75rem;
   }
 
   .sn-footer a {
@@ -123,7 +123,8 @@
 
   @media (max-width: 56.25rem) {
     .sn-footer__inner {
-      padding: 3rem 1.5rem 1.75rem;
+      width: calc(100% - 4rem);
+      padding: 3rem 0 1.75rem;
       grid-template-columns: 1fr;
     }
 
@@ -138,6 +139,10 @@
   }
 
   @media (max-width: 35rem) {
+    .sn-footer__inner {
+      width: calc(100% - 2.5rem);
+    }
+
     .sn-footer__nav {
       grid-template-columns: 1fr;
     }
