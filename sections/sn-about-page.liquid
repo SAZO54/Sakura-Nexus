@@ -1,0 +1,284 @@
+<section class="sn-page sn-page--about full-width">
+  <div class="sn-page-hero">
+    <div class="sn-page-hero__inner">
+      <nav class="sn-page-breadcrumb" aria-label="Breadcrumb">
+        <a href="{{ routes.root_url }}">Home</a>
+        <span>/</span>
+        <span>About</span>
+      </nav>
+
+      <p class="sn-eyebrow">{{ section.settings.eyebrow }}</p>
+      <h1>{{ section.settings.heading }}</h1>
+      <p>{{ section.settings.lead }}</p>
+    </div>
+  </div>
+
+  <div class="sn-page-body">
+    <div class="sn-page-content">
+      <section class="sn-page-panel">
+        <h2>{{ section.settings.story_heading }}</h2>
+        <p>{{ section.settings.story_text }}</p>
+      </section>
+
+      <section class="sn-page-panel">
+        <h2>{{ section.settings.policy_heading }}</h2>
+        <div class="sn-page-grid">
+          <article>
+            <strong>Authentic goods</strong>
+            <p>All products are authentic Japanese anime goods sourced from personal collections in Japan.</p>
+          </article>
+          <article>
+            <strong>Carefully inspected</strong>
+            <p>Each item is checked before listing so condition details, photos, and notes are easy to review.</p>
+          </article>
+          <article>
+            <strong>Ships from Japan</strong>
+            <p>Orders are packed with care and shipped internationally from Japan.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="sn-page-cta">
+        <h2>Ready to explore?</h2>
+        <p>Browse carefully selected anime collectibles and find your next piece from Japan.</p>
+        <div class="sn-page-actions">
+          <a class="sn-button sn-button--primary" href="{{ routes.all_products_collection_url }}">Shop Items</a>
+          <a class="sn-button sn-button--ghost" href="/pages/faq">Read FAQ</a>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .sn-page {
+    --sn-pink: #e8a0bf;
+    --sn-pink-strong: #d67ca7;
+    --sn-pink-soft: #fff5f8;
+    --sn-ink: #1f1f1f;
+    --sn-muted: #6b7280;
+    --sn-body: #374151;
+    --sn-line: #e5e7eb;
+    --sn-cream: #faf7f2;
+    color: var(--sn-ink);
+    background: #fff;
+    font-family: var(--font-primary--family);
+  }
+
+  .sn-page a {
+    text-decoration: none;
+  }
+
+  .sn-page-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--sn-cream);
+  }
+
+  .sn-page-hero::after {
+    content: '';
+    position: absolute;
+    top: -4rem;
+    right: -3rem;
+    width: 18rem;
+    height: 18rem;
+    border-radius: 62.44rem;
+    background: rgba(232, 160, 191, 0.16);
+  }
+
+  .sn-page-hero__inner,
+  .sn-page-content {
+    width: var(--sn-wide-content-width);
+    margin: 0 auto;
+  }
+
+  .sn-page-hero__inner {
+    position: relative;
+    z-index: 1;
+    padding: 2rem 0 4rem;
+  }
+
+  .sn-page-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5625rem;
+    color: var(--sn-muted);
+    font-size: 0.8125rem;
+  }
+
+  .sn-page-breadcrumb a {
+    color: inherit;
+  }
+
+  .sn-page .sn-eyebrow {
+    margin-top: 2.25rem;
+    color: var(--sn-pink-strong);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .sn-page h1 {
+    max-width: 46rem;
+    margin-top: 0.875rem;
+    font-size: 3rem;
+    line-height: 1.06;
+    font-weight: 900;
+  }
+
+  .sn-page-hero__inner > p:not(.sn-eyebrow) {
+    max-width: 44rem;
+    margin-top: 1rem;
+    color: var(--sn-body);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .sn-page-body {
+    padding: 4.5rem 0;
+  }
+
+  .sn-page-content {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .sn-page-panel,
+  .sn-page-cta {
+    padding: 2rem;
+    border: 0.0625rem solid var(--sn-line);
+    border-radius: 0.5rem;
+    background: #fff;
+  }
+
+  .sn-page-panel h2,
+  .sn-page-cta h2 {
+    font-size: 1.5rem;
+    line-height: 1.25;
+  }
+
+  .sn-page-panel p,
+  .sn-page-cta p {
+    margin-top: 1rem;
+    color: var(--sn-body);
+    font-size: 0.9375rem;
+    line-height: 1.65;
+  }
+
+  .sn-page-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .sn-page-grid article {
+    padding: 1.25rem;
+    border-radius: 0.375rem;
+    background: var(--sn-pink-soft);
+  }
+
+  .sn-page-grid strong {
+    display: block;
+    color: var(--sn-ink);
+    font-size: 0.9375rem;
+  }
+
+  .sn-page-grid p {
+    margin-top: 0.75rem;
+    font-size: 0.8125rem;
+  }
+
+  .sn-page-cta {
+    background: var(--sn-cream);
+    text-align: center;
+  }
+
+  .sn-page-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  @media (max-width: 56.25rem) {
+    .sn-page-hero__inner,
+    .sn-page-content {
+      width: calc(100% - 4rem);
+    }
+
+    .sn-page-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 45rem) {
+    .sn-page-hero__inner,
+    .sn-page-content {
+      width: calc(100% - 2.5rem);
+    }
+
+    .sn-page h1 {
+      font-size: 2.25rem;
+    }
+
+    .sn-page-body {
+      padding-block: 3rem;
+    }
+
+    .sn-page-panel,
+    .sn-page-cta {
+      padding: 1.5rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Sakura about page",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "About Sakura Nexus"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Authentic Anime Goods from Japan"
+    },
+    {
+      "type": "textarea",
+      "id": "lead",
+      "label": "Lead",
+      "default": "Sakura Nexus offers authentic Japanese anime collectibles sourced from personal collections in Japan and ships them to anime fans worldwide."
+    },
+    {
+      "type": "text",
+      "id": "story_heading",
+      "label": "Story heading",
+      "default": "Direct from Japan, for anime lovers worldwide"
+    },
+    {
+      "type": "textarea",
+      "id": "story_text",
+      "label": "Story text",
+      "default": "We created Sakura Nexus to help international fans discover authentic Japanese anime goods with clear condition details, careful packaging, and honest information before ordering."
+    },
+    {
+      "type": "text",
+      "id": "policy_heading",
+      "label": "Policy heading",
+      "default": "What we promise"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sakura about page"
+    }
+  ]
+}
+{% endschema %}

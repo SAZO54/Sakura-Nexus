@@ -53,37 +53,45 @@
                 </a>
 
                 <div class="sn-cart-item__content">
-                  <span class="sn-cart-badge sn-cart-badge--{{ condition | handleize }}">{{ condition }}</span>
                   <h3><a href="{{ item.url }}">{{ item.product.title | escape }}</a></h3>
-                  <p>{{ item_type }} &middot; {{ series }} &middot; {{ condition }}</p>
-                  <strong>
+                  <p class="sn-cart-item__meta">{{ item_type }} &middot; {{ series }} &middot; {{ condition }}</p>
+                  <strong class="sn-cart-stock">
                     {% if item.variant.available %}
                       In Stock
                     {% else %}
                       Sold Out
                     {% endif %}
                   </strong>
-                </div>
 
-                <div class="sn-cart-quantity">
-                  <button type="button" data-sn-cart-minus aria-label="Decrease quantity">-</button>
-                  <input
-                    type="number"
-                    name="updates[]"
-                    value="{{ item.quantity }}"
-                    min="0"
-                    data-sn-cart-quantity
-                    aria-label="Quantity for {{ item.product.title | escape }}"
-                  >
-                  <button type="button" data-sn-cart-plus aria-label="Increase quantity">+</button>
-                </div>
+                  <p class="sn-cart-item__price">{{ item.final_line_price | money }}</p>
 
-                <p class="sn-cart-item__price">{{ item.final_line_price | money }}</p>
-                <a class="sn-cart-remove" href="{{ item.url_to_remove }}" aria-label="Remove {{ item.product.title | escape }}">&times;</a>
+                  <div class="sn-cart-item__actions">
+                    <div class="sn-cart-quantity">
+                      <button type="button" data-sn-cart-minus aria-label="Decrease quantity">-</button>
+                      <input
+                        type="number"
+                        name="updates[]"
+                        value="{{ item.quantity }}"
+                        min="0"
+                        data-sn-cart-quantity
+                        aria-label="Quantity for {{ item.product.title | escape }}"
+                      >
+                      <button type="button" data-sn-cart-plus aria-label="Increase quantity">+</button>
+                    </div>
+
+                    <a class="sn-cart-remove" href="{{ item.url_to_remove }}" aria-label="Remove {{ item.product.title | escape }}">
+                      <svg aria-hidden="true" viewBox="0 0 24 24">
+                        <path d="M3 6h18"></path>
+                        <path d="M8 6V4h8v2"></path>
+                        <path d="M19 6l-1 15H6L5 6"></path>
+                        <path d="M10 11v6"></path>
+                        <path d="M14 11v6"></path>
+                      </svg>
+                    </a>
+                  </div>
+                </div>
               </article>
             {% endfor %}
-
-            <button class="sn-cart-update" type="submit" name="update">Update cart</button>
           </form>
         {% else %}
           <div class="sn-cart-empty">
@@ -93,11 +101,11 @@
           </div>
         {% endif %}
 
-        <div class="sn-cart-empty-note">
-          <h3>Empty cart state</h3>
-          <p>If the cart has no items, show: "Your cart is currently empty." and guide users back to the product listing page.</p>
-          <a href="{{ routes.all_products_collection_url }}">Continue Shopping</a>
-          <span>This block is a design note for implementation.</span>
+        <div class="sn-checkout-notes">
+          <h2>Before checkout</h2>
+          <p>100% Authentic goods</p>
+          <p>Ships from Japan</p>
+          <p>Import duties may apply</p>
         </div>
       </div>
 
@@ -126,51 +134,11 @@
           <button type="submit" name="checkout" {% if cart.item_count == 0 %}disabled{% endif %}>Proceed to Checkout</button>
           <a href="{{ routes.all_products_collection_url }}">Continue Shopping</a>
         </form>
-
-        <div class="sn-checkout-notes">
-          <h2>Before checkout</h2>
-          <p>100% Authentic goods</p>
-          <p>Ships from Japan</p>
-          <p>Import duties may apply</p>
-        </div>
       </aside>
     </div>
   </div>
 
-  <section class="sn-cart-related">
-    <div class="sn-cart-related__heading">
-      <div>
-        <p class="sn-eyebrow">Related items</p>
-        <h2>You may also like</h2>
-      </div>
-      <a href="{{ routes.all_products_collection_url }}">View All &rarr;</a>
-    </div>
-
-    <div class="sn-cart-related__grid">
-      {% assign related_count = 0 %}
-      {% for related_product in collections.all.products limit: 8 %}
-        {% if related_count < 4 %}
-          {% assign related_count = related_count | plus: 1 %}
-          {% render 'sn-product-card',
-            product: related_product,
-            card_class: 'sn-cart-related-card',
-            image_class: 'sn-cart-related-card__image',
-            price_class: 'sn-cart-related-card__price',
-            stock_class: 'sn-cart-related-card__stock',
-            image_width: 520,
-            show_badge: false
-          %}
-        {% endif %}
-      {% endfor %}
-
-      {% if related_count == 0 %}
-        {% render 'sn-related-placeholder', asset_name: 'sakura-product-card-set.jpg', badge: 'Good', title: 'ONE PIECE Card Set SP', price: '$36.00' %}
-        {% render 'sn-related-placeholder', asset_name: 'sakura-product-nami-badge.jpg', badge: 'Very Good', title: 'Nami Pin Badge Collection', price: '$14.00' %}
-        {% render 'sn-related-placeholder', asset_name: 'sakura-product-luffy-acrylic.jpg', badge: 'Like New', title: 'Luffy Acrylic Stand Set', price: '$22.00' %}
-        {% render 'sn-related-placeholder', asset_name: 'sakura-feature-nami-dxf.jpg', badge: 'New', title: 'Nami DXF Figure Vol.3', price: '$42.00' %}
-      {% endif %}
-    </div>
-  </section>
+  {% render 'sn-related-products' %}
 
   {% render 'sn-faq-cta',
     class: 'sn-cart-faq',
@@ -303,18 +271,19 @@
     position: relative;
     min-height: 10.75rem;
     display: grid;
-    grid-template-columns: 7.75rem minmax(0, 1fr) 7.25rem 7.375rem;
-    gap: 1.125rem;
-    align-items: center;
-    padding: 1.438rem;
+    grid-template-columns: 9rem minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: stretch;
+    padding: 1.5rem;
     border: 0.0625rem solid var(--sn-line);
     border-radius: 0.375rem;
     background: #fff;
   }
 
   .sn-cart-item__image {
-    width: 7.75rem;
-    height: 7.75rem;
+    height: 100%;
+    min-height: 8rem;
+    aspect-ratio: 1 / 1;
     display: block;
     overflow: hidden;
     border: 0.0625rem solid var(--sn-line);
@@ -329,37 +298,12 @@
     object-fit: cover;
   }
 
-  .sn-cart-badge {
-    min-height: 1.562rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 0.5rem;
-    padding: 0 0.625rem;
-    border-radius: 0.375rem;
-    background: var(--sn-pink);
-    color: #fff;
-    font-size: 0.6875rem;
-    line-height: 1;
-    font-weight: 800;
-    text-transform: uppercase;
-  }
-
-  .sn-cart-badge--like-new,
-  .sn-cart-badge--opened {
-    background: #f4c7d9;
-    color: #7a294d;
-  }
-
-  .sn-cart-badge--good,
-  .sn-cart-badge--used {
-    background: #7c9f32;
-    color: #fff;
-  }
-
-  .sn-cart-badge--very-good {
-    background: #cee8ce;
-    color: #215a21;
+  .sn-cart-item__content {
+    min-width: 0;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    padding-top: 0.125rem;
   }
 
   .sn-cart-item h3 {
@@ -367,38 +311,56 @@
     line-height: 1.35;
   }
 
-  .sn-cart-item__content p {
-    margin-top: 0.375rem;
-    color: var(--sn-muted);
-    font-size: 0.8125rem;
+  .sn-cart-item h3 a {
+    color: var(--sn-ink);
   }
 
-  .sn-cart-item__content strong {
+  .sn-cart-item h3 a:hover,
+  .sn-cart-item h3 a:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 0.1875rem;
+  }
+
+  .sn-cart-item__meta {
+    margin-top: 0.25rem;
+    color: var(--sn-muted);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+  }
+
+  .sn-cart-stock {
     display: block;
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
     color: #6b8f24;
     font-size: 0.75rem;
+    line-height: 1.35;
   }
 
   .sn-cart-quantity {
     width: 7.25rem;
-    height: 2.5rem;
+    height: 2rem;
     display: grid;
     grid-template-columns: 2.125rem 3rem 2.125rem;
     overflow: hidden;
     border: 0.0625rem solid var(--sn-line);
-    border-radius: 0.75rem;
+    border-radius: 0.5rem;
     background: #fff;
   }
 
   .sn-cart-quantity button,
   .sn-cart-quantity input {
     border: 0;
+    outline: 0;
     background: transparent;
     color: var(--sn-ink);
     font: inherit;
     font-weight: 800;
     text-align: center;
+  }
+
+  .sn-cart-quantity button:focus-visible,
+  .sn-cart-quantity input:focus-visible {
+    box-shadow: inset 0 0 0 0.0625rem var(--sn-muted);
   }
 
   .sn-cart-quantity input::-webkit-outer-spin-button,
@@ -407,58 +369,57 @@
     margin: 0;
   }
 
+  .sn-cart-item__actions {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.875rem;
+  }
+
   .sn-cart-item__price {
-    justify-self: end;
+    margin-top: 0.625rem;
     font-size: 1.5rem;
+    line-height: 1.1;
     font-weight: 800;
   }
 
   .sn-cart-remove {
-    position: absolute;
-    top: 1.25rem;
-    right: 1.125rem;
-    color: #e8a1bf;
-    font-size: 1.375rem;
-    line-height: 1;
+    margin-left: auto;
+    width: 1.5rem;
+    height: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #ff4f5e;
   }
 
-  .sn-cart-update {
-    justify-self: start;
-    min-height: 2.625rem;
-    padding: 0 1.375rem;
-    border: 0.0625rem solid var(--sn-pink);
-    border-radius: 0.375rem;
-    background: #fff;
-    color: var(--sn-pink-strong);
-    font-family: inherit;
-    font-weight: 800;
-    cursor: pointer;
+  .sn-cart-remove svg {
+    width: 1.125rem;
+    height: 1.125rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
   }
 
-  .sn-cart-empty,
-  .sn-cart-empty-note {
+  .sn-cart-empty {
     width: 100%;
     padding: 1.5rem;
     border: 0.0625rem solid var(--sn-line);
     border-radius: 0.375rem;
-    background: var(--sn-pink-soft);
   }
 
   .sn-cart-empty {
     min-height: 11.75rem;
   }
 
-  .sn-cart-empty-note {
-    margin-top: 1.25rem;
-  }
-
-  .sn-cart-empty h3,
-  .sn-cart-empty-note h3 {
+  .sn-cart-empty h3 {
     font-size: 1.25rem;
   }
 
-  .sn-cart-empty p,
-  .sn-cart-empty-note p {
+  .sn-cart-empty p {
     max-width: none;
     margin-top: 0.75rem;
     color: var(--sn-body);
@@ -466,8 +427,7 @@
     line-height: 1.5;
   }
 
-  .sn-cart-empty a,
-  .sn-cart-empty-note a {
+  .sn-cart-empty a {
     min-height: 2.75rem;
     display: inline-flex;
     align-items: center;
@@ -478,13 +438,6 @@
     background: var(--sn-pink);
     color: #fff;
     font-weight: 800;
-  }
-
-  .sn-cart-empty-note span {
-    display: inline-block;
-    margin-left: 1.125rem;
-    color: var(--sn-muted);
-    font-size: 0.75rem;
   }
 
   .sn-order-column {
@@ -582,6 +535,7 @@
   }
 
   .sn-checkout-notes {
+    margin-top: 1.5rem;
     padding: 1.5rem;
     background: var(--sn-pink-soft);
   }
@@ -595,103 +549,6 @@
   .sn-checkout-notes p::before {
     content: '\2713';
     margin-right: 0.5rem;
-  }
-
-  .sn-cart-related {
-    padding: 4rem 0 4.5rem;
-    background: var(--sn-cream);
-  }
-
-  .sn-cart-related__heading,
-  .sn-cart-related__grid {
-    width: var(--sn-wide-content-width);
-    margin: 0 auto;
-  }
-
-  .sn-cart-related__heading {
-    display: flex;
-    align-items: end;
-    justify-content: space-between;
-    gap: 1.5rem;
-  }
-
-  .sn-eyebrow {
-    color: var(--sn-pink-strong);
-    font-size: 0.6875rem;
-    font-weight: 800;
-    text-transform: uppercase;
-  }
-
-  .sn-cart-related__heading h2 {
-    margin-top: 0.75rem;
-    font-size: 1.875rem;
-  }
-
-  .sn-cart-related__heading > a {
-    color: var(--sn-pink-strong);
-    font-size: 0.8125rem;
-    font-weight: 800;
-  }
-
-  .sn-cart-related__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--sn-product-card-min-width, 14.7rem)), 1fr));
-    gap: var(--sn-product-card-gap, 1.5rem);
-    justify-content: stretch;
-    justify-items: stretch;
-    margin-top: 2.125rem;
-  }
-
-  .sn-cart-related-card,
-  .sn-cart-related__grid .sn-related-card {
-    display: block;
-    width: 100%;
-    max-width: var(--sn-product-card-max-width, 18.75rem);
-    overflow: hidden;
-    border: 0.0625rem solid var(--sn-line);
-    border-radius: 0.375rem;
-    background: #fff;
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .sn-cart-related-card__image,
-  .sn-cart-related__grid .sn-related-card__image {
-    position: relative;
-    height: 13.12rem;
-    display: block;
-    overflow: hidden;
-    background: #f4f4f5;
-  }
-
-  .sn-cart-related-card__image img,
-  .sn-cart-related-card__image svg,
-  .sn-cart-related__grid .sn-related-card__image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .sn-cart-related-card h3,
-  .sn-cart-related__grid .sn-related-card h3 {
-    min-height: 2.375rem;
-    margin: 1.125rem 1.125rem 0;
-    font-size: 0.875rem;
-    line-height: 1.35;
-  }
-
-  .sn-cart-related-card__price,
-  .sn-cart-related__grid .sn-related-card__price {
-    margin: 0.75rem 1.125rem 0;
-    font-size: 1.25rem;
-    font-weight: 800;
-  }
-
-  .sn-cart-related-card__stock,
-  .sn-cart-related__grid .sn-related-card__stock {
-    margin: 0.25rem 1.125rem 0;
-    color: #6b7280;
-    font-size: 0.75rem;
   }
 
   .sn-card-button {
@@ -742,9 +599,7 @@
   @media (max-width: 73.75rem) {
     .sn-cart-hero__inner,
     .sn-cart-main__heading,
-    .sn-cart-layout,
-    .sn-cart-related__heading,
-    .sn-cart-related__grid {
+    .sn-cart-layout {
       width: calc(100% - 4rem);
     }
 
@@ -757,15 +612,12 @@
   @media (max-width: 45rem) {
     .sn-cart-hero__inner,
     .sn-cart-main__heading,
-    .sn-cart-layout,
-    .sn-cart-related__heading,
-    .sn-cart-related__grid {
+    .sn-cart-layout {
       width: calc(100% - 2.5rem);
     }
 
     .sn-cart-title-row,
-    .sn-cart-main__heading,
-    .sn-cart-related__heading {
+    .sn-cart-main__heading {
       align-items: flex-start;
       flex-direction: column;
     }
@@ -775,32 +627,20 @@
     }
 
     .sn-cart-item {
-      grid-template-columns: 6rem 1fr;
-      align-items: start;
+      gap: 1rem;
+      align-items: stretch;
+      padding: 1.125rem;
     }
 
     .sn-cart-item__image {
-      width: 6rem;
-      height: 6rem;
+      width: 6.75rem;
+      min-height: 6.75rem;
     }
 
-    .sn-cart-quantity {
-      grid-column: 2;
+    .sn-cart-item__actions {
+      gap: 0.75rem;
     }
 
-    .sn-cart-item__price {
-      grid-column: 2;
-      justify-self: start;
-    }
-
-    .sn-cart-empty-note span {
-      display: block;
-      margin: 0.75rem 0 0;
-    }
-
-    .sn-cart-related__grid {
-      grid-template-columns: minmax(0, 1fr);
-    }
   }
 {% endstylesheet %}
 
@@ -811,16 +651,38 @@
     const input = group.querySelector('[data-sn-cart-quantity]');
     const minus = group.querySelector('[data-sn-cart-minus]');
     const plus = group.querySelector('[data-sn-cart-plus]');
+    const form = group.closest('form');
+    let updateTimer;
 
-    if (!input || !minus || !plus) return;
+    if (!input || !minus || !plus || !form) return;
+
+    const submitCartUpdate = () => {
+      window.clearTimeout(updateTimer);
+
+      if (typeof form.requestSubmit === 'function') {
+        form.requestSubmit();
+        return;
+      }
+
+      form.submit();
+    };
+
+    const queueCartUpdate = () => {
+      window.clearTimeout(updateTimer);
+      updateTimer = window.setTimeout(submitCartUpdate, 500);
+    };
 
     minus.addEventListener('click', () => {
       input.value = String(Math.max(0, Number(input.value || 0) - 1));
+      submitCartUpdate();
     });
 
     plus.addEventListener('click', () => {
       input.value = String(Number(input.value || 0) + 1);
+      submitCartUpdate();
     });
+
+    input.addEventListener('change', queueCartUpdate);
   });
 {% endjavascript %}
 

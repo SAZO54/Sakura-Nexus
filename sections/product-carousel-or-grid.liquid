@@ -65,7 +65,7 @@
   }
 
   .sn-product-grid {
-    width: min(calc(100% - 2.5rem), var(--sn-content-width));
+    width: var(--sn-wide-content-width);
     margin: 0 auto;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--sn-product-card-min-width, 14.7rem)), 1fr));
@@ -100,6 +100,7 @@
     }
 
     .sn-product-grid {
+      width: calc(100% - 2.5rem);
       grid-template-columns: minmax(0, 1fr);
     }
   }

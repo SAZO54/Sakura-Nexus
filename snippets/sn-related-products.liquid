@@ -1,0 +1,179 @@
+{% doc %}
+  Renders a reusable related products section with a shared heading, product card grid, and fallback placeholders.
+
+  @param {product} [current_product] - The product currently being viewed.
+  @param {boolean} [exclude_current_product] - Whether to skip the current product from the related list.
+  @param {number} [max_products] - Maximum number of product cards to render.
+  @param {number} [loop_limit] - Maximum number of products to inspect before rendering fallbacks.
+
+  @example
+  {% render 'sn-related-products', current_product: product, exclude_current_product: true %}
+{% enddoc %}
+
+{% liquid
+  assign related_max_products = max_products | default: 4
+  assign related_loop_limit = loop_limit | default: 8
+  assign related_count = 0
+%}
+
+<section class="sn-related">
+  <div class="sn-related__heading">
+    <div>
+      <p class="sn-eyebrow">Related items</p>
+      <h2>You may also like</h2>
+    </div>
+    <a href="{{ routes.all_products_collection_url }}">View All &rarr;</a>
+  </div>
+
+  <div class="sn-related-grid">
+    {% for related_product in collections.all.products limit: related_loop_limit %}
+      {% liquid
+        assign should_render_related_product = true
+
+        if exclude_current_product
+          if current_product
+            if related_product.id == current_product.id
+              assign should_render_related_product = false
+            endif
+          endif
+        endif
+      %}
+
+      {% if should_render_related_product %}
+        {% if related_count < related_max_products %}
+          {% assign related_count = related_count | plus: 1 %}
+          {% render 'sn-product-card',
+            product: related_product,
+            card_class: 'sn-related-card',
+            image_class: 'sn-related-card__image',
+            price_class: 'sn-related-card__price',
+            stock_class: 'sn-related-card__stock',
+            image_width: 520,
+            show_badge: false
+          %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if related_count == 0 %}
+      {% render 'sn-related-placeholder', asset_name: 'sakura-product-card-set.jpg', badge: 'Good', title: 'ONE PIECE Card Set SP', price: '$36.00' %}
+      {% render 'sn-related-placeholder', asset_name: 'sakura-product-nami-badge.jpg', badge: 'Very Good', title: 'Nami Pin Badge Collection', price: '$14.00' %}
+      {% render 'sn-related-placeholder', asset_name: 'sakura-product-luffy-acrylic.jpg', badge: 'Like New', title: 'Luffy Acrylic Stand Set', price: '$22.00' %}
+      {% render 'sn-related-placeholder', asset_name: 'sakura-feature-nami-dxf.jpg', badge: 'New', title: 'Nami DXF Figure Vol.3', price: '$42.00' %}
+    {% endif %}
+  </div>
+</section>
+
+{% stylesheet %}
+  .sn-related {
+    padding: 4rem 0 3.375rem;
+    background: var(--sn-cream);
+  }
+
+  .sn-related__heading,
+  .sn-related-grid {
+    width: var(--sn-wide-content-width);
+    margin: 0 auto;
+  }
+
+  .sn-related__heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .sn-related__heading h2 {
+    margin-top: 0.75rem;
+    font-size: 1.875rem;
+  }
+
+  .sn-related__heading > a {
+    color: var(--sn-pink-strong);
+    font-size: 0.8125rem;
+    font-weight: 800;
+  }
+
+  .sn-related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--sn-listing-card-min-width, 13rem)), 1fr));
+    gap: var(--sn-product-card-gap, 1.5rem);
+    justify-content: stretch;
+    justify-items: stretch;
+    margin-top: 2.125rem;
+  }
+
+  .sn-related-card {
+    width: 100%;
+    max-width: none;
+    aspect-ratio: var(--sn-product-card-ratio, 125 / 176);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 0.0625rem solid var(--sn-line);
+    border-radius: 0.375rem;
+    background: #fff;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .sn-related-card__image {
+    position: relative;
+    flex: 0 0 auto;
+    aspect-ratio: var(--sn-product-card-image-ratio, 25 / 21);
+    display: block;
+    overflow: hidden;
+    background: #f4f4f5;
+  }
+
+  .sn-related-card__image img,
+  .sn-related-card__image svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .sn-related-card h3 {
+    min-height: 2.375rem;
+    margin: 1.125rem 1.125rem 0;
+    font-size: 0.875rem;
+    line-height: 1.35;
+    font-weight: 700;
+  }
+
+  .sn-related-card__price {
+    margin: 0.75rem 1.125rem 0;
+    font-size: 1.25rem;
+    line-height: 1.2;
+    font-weight: 800;
+  }
+
+  .sn-related-card__stock {
+    margin: 0.25rem 1.125rem 0;
+    color: #6b7280;
+    font-size: 0.75rem;
+  }
+
+  @media (max-width: 73.75rem) {
+    .sn-related__heading,
+    .sn-related-grid {
+      width: calc(100% - 4rem);
+    }
+  }
+
+  @media (max-width: 45rem) {
+    .sn-related__heading,
+    .sn-related-grid {
+      width: calc(100% - 2.5rem);
+    }
+
+    .sn-related-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .sn-related__heading {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+{% endstylesheet %}

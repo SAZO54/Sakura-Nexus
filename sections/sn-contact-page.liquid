@@ -1,0 +1,343 @@
+<section class="sn-page sn-page--contact full-width">
+  <div class="sn-page-hero">
+    <div class="sn-page-hero__inner">
+      <nav class="sn-page-breadcrumb" aria-label="Breadcrumb">
+        <a href="{{ routes.root_url }}">Home</a>
+        <span>/</span>
+        <span>Contact</span>
+      </nav>
+
+      <p class="sn-eyebrow">Contact</p>
+      <h1>Contact Us</h1>
+      <p>If you have any questions about items, shipping, customs, or your order, please contact us using the form below.</p>
+    </div>
+  </div>
+
+  <div class="sn-contact-page__body">
+    <div class="sn-contact-page__form-card">
+      {% form 'contact', class: 'sn-contact-form' %}
+        {% if form.posted_successfully? %}
+          <div class="sn-form-success" tabindex="-1" autofocus>
+            Thanks for contacting us. We'll get back to you as soon as possible.
+          </div>
+        {% endif %}
+
+        {% if form.errors %}
+          <div class="sn-form-errors" role="alert">
+            {{ form.errors | default_errors }}
+          </div>
+        {% endif %}
+
+        <div class="sn-field">
+          <label for="ContactFormName-{{ section.id }}">Name</label>
+          <input
+            id="ContactFormName-{{ section.id }}"
+            type="text"
+            name="contact[name]"
+            value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+            autocomplete="name"
+          >
+        </div>
+
+        <div class="sn-field">
+          <label for="ContactFormEmail-{{ section.id }}">Email <span aria-hidden="true">*</span></label>
+          <input
+            id="ContactFormEmail-{{ section.id }}"
+            type="email"
+            name="contact[email]"
+            value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+            autocomplete="email"
+            autocorrect="off"
+            autocapitalize="off"
+            required
+          >
+        </div>
+
+        <div class="sn-field">
+          <label for="ContactFormMessage-{{ section.id }}">Message <span aria-hidden="true">*</span></label>
+          <textarea
+            id="ContactFormMessage-{{ section.id }}"
+            name="contact[body]"
+            rows="7"
+            required
+          >{{ form.body }}</textarea>
+        </div>
+
+        <button class="sn-button sn-button--primary" type="submit">Send</button>
+      {% endform %}
+    </div>
+
+    <aside class="sn-contact-page__info">
+      <h2>Before contacting us</h2>
+      <p>For common questions about authenticity, shipping, returns, customs, and payment methods, please check these pages first.</p>
+      <a class="sn-button sn-button--primary" href="/pages/shipping-returns">Shipping & Returns</a>
+      <a class="sn-button sn-button--ghost" href="/pages/faq">View FAQ</a>
+
+      <div class="sn-contact-page__note">
+        <strong>Reply time</strong>
+        <span>We typically reply within 2-3 business days.</span>
+      </div>
+    </aside>
+  </div>
+</section>
+
+{% stylesheet %}
+  .sn-page {
+    --sn-pink: #e8a0bf;
+    --sn-pink-strong: #d67ca7;
+    --sn-pink-soft: #fff5f8;
+    --sn-ink: #1f1f1f;
+    --sn-muted: #6b7280;
+    --sn-body: #374151;
+    --sn-line: #e5e7eb;
+    --sn-cream: #faf7f2;
+    color: var(--sn-ink);
+    background: #fff;
+    font-family: var(--font-primary--family);
+  }
+
+  .sn-page a {
+    text-decoration: none;
+  }
+
+  .sn-page-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--sn-cream);
+  }
+
+  .sn-page-hero::after {
+    content: '';
+    position: absolute;
+    top: -4rem;
+    right: -3rem;
+    width: 18rem;
+    height: 18rem;
+    border-radius: 62.44rem;
+    background: rgba(232, 160, 191, 0.16);
+  }
+
+  .sn-page-hero__inner,
+  .sn-contact-page__body {
+    width: var(--sn-wide-content-width);
+    margin: 0 auto;
+  }
+
+  .sn-page-hero__inner {
+    position: relative;
+    z-index: 1;
+    padding: 2rem 0 4rem;
+  }
+
+  .sn-page-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5625rem;
+    color: var(--sn-muted);
+    font-size: 0.8125rem;
+  }
+
+  .sn-page-breadcrumb a {
+    color: inherit;
+  }
+
+  .sn-page .sn-eyebrow {
+    margin-top: 2.25rem;
+    color: var(--sn-pink-strong);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .sn-page h1 {
+    max-width: 46rem;
+    margin-top: 0.875rem;
+    font-size: 3rem;
+    line-height: 1.06;
+    font-weight: 900;
+  }
+
+  .sn-page-hero__inner > p:not(.sn-eyebrow) {
+    max-width: 44rem;
+    margin-top: 1rem;
+    color: var(--sn-body);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .sn-contact-page__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 21rem;
+    gap: 2rem;
+    padding: 4.5rem 0;
+    align-items: start;
+  }
+
+  .sn-contact-page__form-card,
+  .sn-contact-page__info {
+    border: 0.0625rem solid var(--sn-line);
+    border-radius: 0.5rem;
+    background: #fff;
+  }
+
+  .sn-contact-page__form-card {
+    padding: 2rem;
+  }
+
+  .sn-contact-form {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .sn-field label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--sn-body);
+    font-size: 0.8125rem;
+    font-weight: 800;
+  }
+
+  .sn-field input,
+  .sn-field textarea {
+    width: 100%;
+    border: 0.0625rem solid var(--sn-line);
+    border-radius: 0.5rem;
+    background: #fff;
+    color: var(--sn-ink);
+    font: inherit;
+  }
+
+  .sn-field input {
+    min-height: 3rem;
+    padding: 0 1rem;
+  }
+
+  .sn-field textarea {
+    padding: 1rem;
+    resize: vertical;
+  }
+
+  .sn-field input:focus,
+  .sn-field textarea:focus {
+    border-color: var(--sn-pink);
+    outline: none;
+    box-shadow: 0 0 0 0.1875rem rgba(232, 160, 191, 0.2);
+  }
+
+  .sn-form-success,
+  .sn-form-errors {
+    padding: 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .sn-form-success {
+    background: #cee8ce;
+    color: #215a21;
+  }
+
+  .sn-form-errors {
+    background: #fff5f8;
+    color: #7a294d;
+  }
+
+  .sn-contact-form .sn-button {
+    border: 0;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .sn-contact-form .sn-button:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 0.1875rem rgba(232, 160, 191, 0.24);
+  }
+
+  .sn-contact-page__info {
+    position: sticky;
+    top: 1.5rem;
+    padding: 1.5rem;
+    background: var(--sn-pink-soft);
+  }
+
+  .sn-contact-page__info h2 {
+    font-size: 1.25rem;
+  }
+
+  .sn-contact-page__info p {
+    margin-top: 0.875rem;
+    color: var(--sn-body);
+    font-size: 0.875rem;
+    line-height: 1.55;
+  }
+
+  .sn-contact-page__info .sn-button {
+    margin-top: 1.25rem;
+    margin-right: 0.75rem;
+  }
+
+  .sn-contact-page__note {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 0.0625rem solid rgba(31, 31, 31, 0.1);
+  }
+
+  .sn-contact-page__note strong {
+    font-size: 0.875rem;
+  }
+
+  .sn-contact-page__note span {
+    color: var(--sn-muted);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 56.25rem) {
+    .sn-page-hero__inner,
+    .sn-contact-page__body {
+      width: calc(100% - 4rem);
+    }
+
+    .sn-contact-page__body {
+      grid-template-columns: 1fr;
+    }
+
+    .sn-contact-page__info {
+      position: static;
+    }
+  }
+
+  @media (max-width: 45rem) {
+    .sn-page-hero__inner,
+    .sn-contact-page__body {
+      width: calc(100% - 2.5rem);
+    }
+
+    .sn-page h1 {
+      font-size: 2.25rem;
+    }
+
+    .sn-contact-page__body {
+      padding-block: 3rem;
+    }
+
+    .sn-contact-page__form-card,
+    .sn-contact-page__info {
+      padding: 1.5rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Sakura contact page",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Sakura contact page"
+    }
+  ]
+}
+{% endschema %}

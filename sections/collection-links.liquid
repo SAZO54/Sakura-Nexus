@@ -4,9 +4,9 @@
     heading: section.settings.heading
   %}
 
-  <div class="sn-collection-grid">
+  <div class="sn-collection-links-grid">
     {% for block in section.blocks %}
-      <a class="sn-collection-card" href="{{ block.settings.url }}" {{ block.shopify_attributes }}>
+      <a class="sn-collection-links-card" href="{{ block.settings.url }}" {{ block.shopify_attributes }}>
         {% if block.settings.image %}
           {{ block.settings.image | image_url: width: 520 | image_tag: loading: 'lazy', alt: block.settings.image.alt | default: block.settings.title }}
         {% elsif block.settings.asset_name != blank %}
@@ -41,15 +41,15 @@
     text-decoration: none;
   }
 
-  .sn-collection-grid {
-    width: min(calc(100% - 2.5rem), var(--sn-content-width));
+  .sn-collection-links-grid {
+    width: var(--sn-wide-content-width);
     margin: 0 auto;
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 1.5rem;
   }
 
-  .sn-collection-card {
+  .sn-collection-links-card {
     position: relative;
     min-height: 10rem;
     overflow: hidden;
@@ -59,7 +59,7 @@
     background: #fff5f8;
   }
 
-  .sn-collection-card img {
+  .sn-collection-links-card img {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -68,32 +68,32 @@
     opacity: 0.9;
   }
 
-  .sn-collection-card::after {
+  .sn-collection-links-card::after {
     content: '';
     position: absolute;
     inset: 0;
     background: linear-gradient(90deg, rgba(255, 245, 248, 0.96), rgba(255, 245, 248, 0.72) 52%, rgba(255, 245, 248, 0.14));
   }
 
-  .sn-collection-card strong,
-  .sn-collection-card span,
-  .sn-collection-card b {
+  .sn-collection-links-card strong,
+  .sn-collection-links-card span,
+  .sn-collection-links-card b {
     position: relative;
     z-index: 1;
     display: block;
   }
 
-  .sn-collection-card strong {
+  .sn-collection-links-card strong {
     font-size: 0.9375rem;
   }
 
-  .sn-collection-card span {
+  .sn-collection-links-card span {
     margin-top: 0.75rem;
     color: var(--sn-muted);
     font-size: 0.75rem;
   }
 
-  .sn-collection-card b {
+  .sn-collection-links-card b {
     position: absolute;
     right: 1.25rem;
     bottom: 1.5rem;
@@ -102,7 +102,7 @@
   }
 
   @media (max-width: 68.75rem) {
-    .sn-collection-grid {
+    .sn-collection-links-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
@@ -112,11 +112,12 @@
       padding-block: 3.5rem;
     }
 
-    .sn-collection-grid {
+    .sn-collection-links-grid {
+      width: calc(100% - 2.5rem);
       grid-template-columns: 1fr;
     }
 
-    .sn-collection-card {
+    .sn-collection-links-card {
       min-height: 9rem;
     }
   }

@@ -1,34 +1,36 @@
 <section class="sn-about full-width">
-  <div class="sn-about__copy">
-    {% if section.settings.eyebrow != blank %}
-      <p class="sn-eyebrow">{{ section.settings.eyebrow }}</p>
-    {% endif %}
-    <h2>{{ section.settings.heading }}</h2>
-    {% if section.settings.text != blank %}
-      <p>{{ section.settings.text }}</p>
-    {% endif %}
-
-    <div class="sn-actions">
-      {% if section.settings.primary_url != blank %}
-        <a class="sn-button sn-button--primary" href="{{ section.settings.primary_url }}">
-          {{ section.settings.primary_label }}
-        </a>
+  <div class="sn-about__inner">
+    <div class="sn-about__copy">
+      {% if section.settings.eyebrow != blank %}
+        <p class="sn-eyebrow">{{ section.settings.eyebrow }}</p>
       {% endif %}
-      {% if section.settings.secondary_url != blank %}
-        <a class="sn-button sn-button--ghost" href="{{ section.settings.secondary_url }}">
-          {{ section.settings.secondary_label }}
-        </a>
+      <h2>{{ section.settings.heading }}</h2>
+      {% if section.settings.text != blank %}
+        <p>{{ section.settings.text }}</p>
       {% endif %}
-    </div>
-  </div>
 
-  <div class="sn-stats" aria-label="Sakura Nexus facts">
-    {% for block in section.blocks %}
-      <div {{ block.shopify_attributes }}>
-        <strong>{{ block.settings.value }}</strong>
-        <span>{{ block.settings.label }}</span>
+      <div class="sn-actions">
+        {% if section.settings.primary_url != blank %}
+          <a class="sn-button sn-button--primary" href="{{ section.settings.primary_url }}">
+            {{ section.settings.primary_label }}
+          </a>
+        {% endif %}
+        {% if section.settings.secondary_url != blank %}
+          <a class="sn-button sn-button--ghost" href="{{ section.settings.secondary_url }}">
+            {{ section.settings.secondary_label }}
+          </a>
+        {% endif %}
       </div>
-    {% endfor %}
+    </div>
+
+    <div class="sn-stats" aria-label="Sakura Nexus facts">
+      {% for block in section.blocks %}
+        <div {{ block.shopify_attributes }}>
+          <strong>{{ block.settings.value }}</strong>
+          <span>{{ block.settings.label }}</span>
+        </div>
+      {% endfor %}
+    </div>
   </div>
 </section>
 
@@ -43,13 +45,16 @@
     position: relative;
     overflow: hidden;
     padding-block: 5.5rem;
-    display: grid;
-    grid-template-columns: 8rem minmax(0, 1fr) minmax(0, 1fr) 8rem;
-    gap: 3rem;
-    align-items: center;
     background: var(--sn-cream);
     color: var(--sn-ink);
     font-family: var(--font-primary--family);
+  }
+
+  .sn-about__inner {
+    width: var(--sn-wide-content-width);
+    margin: 0 auto;
+    gap: 3rem;
+    align-items: center;
   }
 
   .sn-about::after {
@@ -69,7 +74,6 @@
   }
 
   .sn-about__copy {
-    grid-column: 2;
     position: relative;
     z-index: 1;
   }
@@ -126,7 +130,6 @@
   }
 
   .sn-stats {
-    grid-column: 3;
     position: relative;
     z-index: 1;
     display: grid;
@@ -160,15 +163,8 @@
   }
 
   @media (max-width: 68.75rem) {
-    .sn-about {
+    .sn-about__inner {
       grid-template-columns: 1fr;
-    }
-
-    .sn-about__copy,
-    .sn-stats {
-      grid-column: 1;
-      width: calc(100% - 4rem);
-      margin-inline: auto;
     }
   }
 
@@ -177,8 +173,7 @@
       padding-block: 3.5rem;
     }
 
-    .sn-about__copy,
-    .sn-stats {
+    .sn-about__inner {
       width: calc(100% - 2.5rem);
     }
 
