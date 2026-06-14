@@ -73,6 +73,7 @@
                         name="updates[]"
                         value="{{ item.quantity }}"
                         min="0"
+                        {% if item.variant.inventory_management and item.variant.inventory_quantity > 0 %}max="{{ item.variant.inventory_quantity }}"{% endif %}
                         data-sn-cart-quantity
                         aria-label="Quantity for {{ item.product.title | escape }}"
                       >
@@ -151,7 +152,7 @@
 
 {% stylesheet %}
   .sn-cart-page {
-    --sn-pink: #e8a1bf;
+    --sn-pink: #E8A0BF;
     --sn-pink-soft: #fff5f8;
     --sn-pink-strong: #d67da6;
     --sn-ink: #1f1f1f;
@@ -356,6 +357,12 @@
     font: inherit;
     font-weight: 800;
     text-align: center;
+  }
+
+  .sn-cart-quantity button:disabled {
+    color: var(--sn-muted);
+    cursor: default;
+    opacity: 0.45;
   }
 
   .sn-cart-quantity button:focus-visible,
@@ -656,6 +663,25 @@
 
     if (!input || !minus || !plus || !form) return;
 
+    const getMaxQuantity = () => {
+      const max = Number(input.getAttribute('max'));
+      return Number.isFinite(max) && max > 0 ? max : null;
+    };
+
+    const clampQuantity = (value) => {
+      const min = Number(input.getAttribute('min')) || 0;
+      const max = getMaxQuantity();
+      let nextValue = Number(value || min);
+
+      if (!Number.isFinite(nextValue)) nextValue = min;
+      nextValue = Math.max(min, nextValue);
+      if (max !== null) nextValue = Math.min(max, nextValue);
+
+      input.value = String(nextValue);
+      plus.disabled = max !== null && nextValue >= max;
+      minus.disabled = nextValue <= min;
+    };
+
     const submitCartUpdate = () => {
       window.clearTimeout(updateTimer);
 
@@ -672,17 +698,22 @@
       updateTimer = window.setTimeout(submitCartUpdate, 500);
     };
 
+    clampQuantity(input.value);
+
     minus.addEventListener('click', () => {
-      input.value = String(Math.max(0, Number(input.value || 0) - 1));
+      clampQuantity(Number(input.value || 0) - 1);
       submitCartUpdate();
     });
 
     plus.addEventListener('click', () => {
-      input.value = String(Number(input.value || 0) + 1);
+      clampQuantity(Number(input.value || 0) + 1);
       submitCartUpdate();
     });
 
-    input.addEventListener('change', queueCartUpdate);
+    input.addEventListener('change', () => {
+      clampQuantity(input.value);
+      queueCartUpdate();
+    });
   });
 {% endjavascript %}
 

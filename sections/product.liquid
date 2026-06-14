@@ -83,6 +83,7 @@
                 {% for variant in product.variants %}
                   <option
                     value="{{ variant.id }}"
+                    {% if variant.inventory_management and variant.inventory_quantity > 0 %}data-inventory-quantity="{{ variant.inventory_quantity }}"{% endif %}
                     {% if variant == current_variant %}selected{% endif %}
                     {% unless variant.available %}disabled{% endunless %}
                   >
@@ -95,7 +96,15 @@
             <label class="sn-quantity-label" for="Quantity-{{ section.id }}">Quantity</label>
             <div class="sn-quantity-selector">
               <button type="button" data-sn-quantity-minus aria-label="Decrease quantity">-</button>
-              <input id="Quantity-{{ section.id }}" name="quantity" type="number" min="1" value="1" inputmode="numeric">
+              <input
+                id="Quantity-{{ section.id }}"
+                name="quantity"
+                type="number"
+                min="1"
+                value="1"
+                inputmode="numeric"
+                {% if current_variant.inventory_management and current_variant.inventory_quantity > 0 %}max="{{ current_variant.inventory_quantity }}"{% endif %}
+              >
               <button type="button" data-sn-quantity-plus aria-label="Increase quantity">+</button>
             </div>
 
@@ -238,7 +247,7 @@
 
 {% stylesheet %}
   .sn-product-page {
-    --sn-pink: #e8a1bf;
+    --sn-pink: #E8A0BF;
     --sn-pink-soft: #fff5f7;
     --sn-pink-strong: #d67da6;
     --sn-ink: #1f1f1f;
@@ -493,12 +502,12 @@
 
   .sn-quantity-selector {
     width: 8.25rem;
-    height: 2.75rem;
+    height: 2.25rem;
     display: grid;
     grid-template-columns: 2.5rem 3.25rem 2.5rem;
     overflow: hidden;
     border: 0.0625rem solid var(--sn-line);
-    border-radius: 0.75rem;
+    border-radius: 0.5rem;
     background: #fff;
   }
 
@@ -510,6 +519,12 @@
     font: inherit;
     font-weight: 800;
     text-align: center;
+  }
+
+  .sn-quantity-selector button:disabled {
+    color: var(--sn-muted);
+    cursor: default;
+    opacity: 0.45;
   }
 
   .sn-quantity-selector input::-webkit-outer-spin-button,
@@ -542,14 +557,18 @@
     margin-top: 0.875rem;
   }
 
-  .sn-buy-now .shopify-payment-button__button {
+  .sn-buy-now .shopify-payment-button__button,
+  .sn-buy-now .shopify-payment-button__button--unbranded {
     min-height: 3.375rem;
     border: 0.0625rem solid var(--sn-pink) !important;
     border-radius: 0.375rem !important;
     background: #fff !important;
     color: var(--sn-pink) !important;
+    font-family: inherit !important;
     font-size: 1.1rem !important;
     font-weight: 800 !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0 !important;
   }
 
   .sn-save-product {
@@ -888,19 +907,59 @@
   const quantityInput = document.querySelector('.sn-quantity-selector input');
   const minusButton = document.querySelector('[data-sn-quantity-minus]');
   const plusButton = document.querySelector('[data-sn-quantity-plus]');
+  const variantSelect = document.querySelector('.sn-product-form select[name="id"]');
   const mainImage = document.querySelector('.sn-product-gallery__main img');
   const thumbs = document.querySelectorAll('[data-sn-product-thumb]');
   const saveButton = document.querySelector('[data-sn-save-product]');
 
   if (quantityInput && minusButton && plusButton) {
+    const getMaxQuantity = () => {
+      const max = Number(quantityInput.getAttribute('max'));
+      return Number.isFinite(max) && max > 0 ? max : null;
+    };
+
+    const clampQuantity = (value) => {
+      const min = Number(quantityInput.getAttribute('min')) || 1;
+      const max = getMaxQuantity();
+      let nextValue = Number(value || min);
+
+      if (!Number.isFinite(nextValue)) nextValue = min;
+      nextValue = Math.max(min, nextValue);
+      if (max !== null) nextValue = Math.min(max, nextValue);
+
+      quantityInput.value = String(nextValue);
+      plusButton.disabled = max !== null && nextValue >= max;
+      minusButton.disabled = nextValue <= min;
+    };
+
+    clampQuantity(quantityInput.value);
+
     minusButton.addEventListener('click', () => {
-      const value = Math.max(1, Number(quantityInput.value || 1) - 1);
-      quantityInput.value = String(value);
+      clampQuantity(Number(quantityInput.value || 1) - 1);
     });
 
     plusButton.addEventListener('click', () => {
-      quantityInput.value = String(Number(quantityInput.value || 1) + 1);
+      clampQuantity(Number(quantityInput.value || 1) + 1);
     });
+
+    quantityInput.addEventListener('change', () => {
+      clampQuantity(quantityInput.value);
+    });
+
+    if (variantSelect) {
+      variantSelect.addEventListener('change', () => {
+        const selectedOption = variantSelect.selectedOptions[0];
+        const maxQuantity = selectedOption ? selectedOption.dataset.inventoryQuantity : '';
+
+        if (maxQuantity) {
+          quantityInput.setAttribute('max', maxQuantity);
+        } else {
+          quantityInput.removeAttribute('max');
+        }
+
+        clampQuantity(quantityInput.value);
+      });
+    }
   }
 
   if (mainImage && thumbs.length) {
@@ -922,7 +981,7 @@
     const syncSavedState = (saved) => {
       saveButton.setAttribute('aria-pressed', String(saved));
       if (label) label.textContent = saved ? 'Saved' : 'Save item';
-      if (icon) icon.textContent = saved ? '♥' : '♡';
+      if (icon) icon.textContent = saved ? '❤' : '♡';
     };
 
     let isSaved = false;
