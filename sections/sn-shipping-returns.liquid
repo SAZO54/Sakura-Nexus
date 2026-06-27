@@ -1,0 +1,406 @@
+<section class="sn-page sn-page--shipping-returns full-width">
+  <div class="sn-page-hero">
+    <div class="sn-page-hero__inner">
+      <nav class="sn-page-breadcrumb" aria-label="Breadcrumb">
+        <a href="{{ routes.root_url }}">Home</a>
+        <span>/</span>
+        <span>Shipping & Returns</span>
+      </nav>
+
+      <p class="sn-eyebrow">Shipping, returns & fees</p>
+      <h1>Shipping & Returns</h1>
+      <p>Learn how Sakura Nexus ships authentic anime goods from Japan, how shipping fees are calculated, and how returns or damaged items are handled.</p>
+    </div>
+  </div>
+
+  <div class="sn-shipping-returns__body">
+    <div class="sn-shipping-returns__content">
+      <section class="sn-info-panel">
+        <h2>Shipping from Japan</h2>
+        <p>All orders ship directly from Japan. Orders are usually processed and shipped within 2 business days after payment confirmation.</p>
+
+        <div class="sn-info-grid">
+          <article>
+            <strong>Shipping method</strong>
+            <span>EMS by Japan Post</span>
+          </article>
+          <article>
+            <strong>Tracking</strong>
+            <span>A tracking number is sent by email after shipment.</span>
+          </article>
+          <article>
+            <strong>Free shipping</strong>
+            <span>Available on eligible orders over $80.</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="sn-info-panel">
+        <h2>Estimated delivery times</h2>
+        <p>Delivery times are estimates and may vary due to customs clearance, local postal conditions, holidays, or other external factors.</p>
+
+        <div class="sn-rate-table" role="table" aria-label="Estimated delivery times">
+          <div role="row">
+            <strong role="columnheader">Region</strong>
+            <strong role="columnheader">Estimate</strong>
+          </div>
+          <div role="row">
+            <span role="cell">North America and Europe</span>
+            <span role="cell">5-10 business days</span>
+          </div>
+          <div role="row">
+            <span role="cell">Southeast Asia</span>
+            <span role="cell">3-7 business days</span>
+          </div>
+          <div role="row">
+            <span role="cell">Other regions</span>
+            <span role="cell">7-14 business days</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="sn-info-panel">
+        <h2>Shipping rates</h2>
+        <p>Shipping costs are calculated at checkout based on your destination and package weight. Free international shipping is available on eligible orders over $80, excluding oversized items or restricted destinations.</p>
+
+        <div class="sn-rate-table" role="table" aria-label="Shipping rate guide">
+          <div role="row">
+            <strong role="columnheader">Package weight</strong>
+            <strong role="columnheader">North America / Europe</strong>
+            <strong role="columnheader">Southeast Asia</strong>
+          </div>
+          <div role="row">
+            <span role="cell">Up to 500g</span>
+            <span role="cell">$15</span>
+            <span role="cell">$12</span>
+          </div>
+          <div role="row">
+            <span role="cell">501g-1kg</span>
+            <span role="cell">$22</span>
+            <span role="cell">$18</span>
+          </div>
+          <div role="row">
+            <span role="cell">1kg-2kg</span>
+            <span role="cell">$30</span>
+            <span role="cell">$24</span>
+          </div>
+          <div role="row">
+            <span role="cell">Over 2kg</span>
+            <span role="cell">$40+</span>
+            <span role="cell">$32+</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="sn-info-panel">
+        <h2>Customs & import duties</h2>
+        <p>International orders may be subject to import duties, taxes, customs fees, or handling fees upon arrival in your country. These charges are the buyer's responsibility and are not included in the item price or shipping cost.</p>
+        <p>For U.S. customers, customs duties or import taxes may apply regardless of order value due to changes in U.S. import rules. Please check with your local customs office before placing your order.</p>
+      </section>
+
+      <section class="sn-info-panel">
+        <h2>Returns & refunds</h2>
+        <p>Due to the nature of collectible goods, all sales are final. We do not accept returns or exchanges for buyer's remorse, change of mind, incorrect orders made by the customer, opened items, or used items after delivery.</p>
+
+        <div class="sn-info-grid">
+          <article>
+            <strong>Damaged in transit</strong>
+            <span>Contact us within 7 days of delivery with clear photos.</span>
+          </article>
+          <article>
+            <strong>Incorrect item sent</strong>
+            <span>We will review the issue and determine refund or replacement options.</span>
+          </article>
+          <article>
+            <strong>Customs refusal</strong>
+            <span>Refusal to pay customs duties does not qualify for a refund.</span>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <aside class="sn-shipping-returns__aside">
+      <h2>Need help?</h2>
+      <p>If you have questions about shipping, customs, or a damaged item, contact us before or after placing your order.</p>
+      <a class="sn-button sn-button--primary" href="/pages/contact">Contact Us</a>
+
+      <div class="sn-policy-links">
+        <strong>Policy pages</strong>
+        <a href="/policies/shipping-policy">Shipping Policy</a>
+        <a href="/policies/refund-policy">Refund Policy</a>
+        <a href="/pages/faq">FAQ</a>
+      </div>
+    </aside>
+  </div>
+</section>
+
+{% stylesheet %}
+  .sn-page {
+    --sn-pink: #e8a0bf;
+    --sn-pink-strong: #d67ca7;
+    --sn-pink-soft: #fff5f8;
+    --sn-ink: #1f1f1f;
+    --sn-muted: #6b7280;
+    --sn-body: #374151;
+    --sn-line: #e5e7eb;
+    --sn-cream: #faf7f2;
+    color: var(--sn-ink);
+    background: #fff;
+    font-family: var(--font-primary--family);
+  }
+
+  .sn-page a {
+    text-decoration: none;
+  }
+
+  .sn-page-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--sn-cream);
+  }
+
+  .sn-page-hero::after {
+    content: '';
+    position: absolute;
+    top: -4rem;
+    right: -3rem;
+    width: 18rem;
+    height: 18rem;
+    border-radius: 62.44rem;
+    background: rgba(232, 160, 191, 0.16);
+  }
+
+  .sn-page-hero__inner,
+  .sn-shipping-returns__body {
+    width: var(--sn-wide-content-width);
+    margin: 0 auto;
+  }
+
+  .sn-page-hero__inner {
+    position: relative;
+    z-index: 1;
+    padding: 2rem 0 4rem;
+  }
+
+  .sn-page-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5625rem;
+    color: var(--sn-muted);
+    font-size: 0.8125rem;
+  }
+
+  .sn-page-breadcrumb a {
+    color: inherit;
+  }
+
+  .sn-page .sn-eyebrow {
+    margin-top: 2.25rem;
+    color: var(--sn-pink-strong);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .sn-page h1 {
+    max-width: 46rem;
+    margin-top: 0.875rem;
+    font-size: 3rem;
+    line-height: 1.06;
+    font-weight: 900;
+  }
+
+  .sn-page-hero__inner > p:not(.sn-eyebrow) {
+    max-width: 44rem;
+    margin-top: 1rem;
+    color: var(--sn-body);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .sn-shipping-returns__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 21rem;
+    gap: 2rem;
+    padding: 4.5rem 0;
+    align-items: start;
+  }
+
+  .sn-shipping-returns__content {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .sn-info-panel,
+  .sn-shipping-returns__aside {
+    border: 0.0625rem solid var(--sn-line);
+    border-radius: 0.5rem;
+    background: #fff;
+  }
+
+  .sn-info-panel {
+    padding: 2rem;
+  }
+
+  .sn-info-panel h2,
+  .sn-shipping-returns__aside h2 {
+    font-size: 1.5rem;
+    line-height: 1.25;
+  }
+
+  .sn-info-panel p,
+  .sn-shipping-returns__aside p {
+    margin-top: 1rem;
+    color: var(--sn-body);
+    font-size: 0.9375rem;
+    line-height: 1.65;
+  }
+
+  .sn-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .sn-info-grid article {
+    padding: 1.25rem;
+    border-radius: 0.375rem;
+    background: var(--sn-pink-soft);
+  }
+
+  .sn-info-grid strong,
+  .sn-info-grid span {
+    display: block;
+  }
+
+  .sn-info-grid strong {
+    font-size: 0.9375rem;
+  }
+
+  .sn-info-grid span {
+    margin-top: 0.75rem;
+    color: var(--sn-body);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  .sn-rate-table {
+    display: grid;
+    margin-top: 1.5rem;
+    overflow: hidden;
+    border: 0.0625rem solid var(--sn-line);
+    border-radius: 0.375rem;
+  }
+
+  .sn-rate-table > div {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    min-height: 3rem;
+    border-top: 0.0625rem solid var(--sn-line);
+  }
+
+  .sn-rate-table > div:first-child {
+    border-top: 0;
+    background: var(--sn-cream);
+  }
+
+  .sn-rate-table strong,
+  .sn-rate-table span {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: var(--sn-body);
+    font-size: 0.8125rem;
+    line-height: 1.45;
+  }
+
+  .sn-rate-table strong {
+    color: var(--sn-ink);
+    font-weight: 800;
+  }
+
+  .sn-shipping-returns__aside {
+    position: sticky;
+    top: 1.5rem;
+    padding: 1.5rem;
+    background: var(--sn-pink-soft);
+  }
+
+  .sn-shipping-returns__aside .sn-button {
+    margin-top: 1.25rem;
+  }
+
+  .sn-policy-links {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 0.0625rem solid rgba(31, 31, 31, 0.1);
+  }
+
+  .sn-policy-links strong {
+    font-size: 0.875rem;
+  }
+
+  .sn-policy-links a {
+    color: var(--sn-pink-strong);
+    font-size: 0.8125rem;
+    font-weight: 800;
+  }
+
+  @media (max-width: 56.25rem) {
+    .sn-page-hero__inner,
+    .sn-shipping-returns__body {
+      width: calc(100% - 4rem);
+    }
+
+    .sn-shipping-returns__body {
+      grid-template-columns: 1fr;
+    }
+
+    .sn-shipping-returns__aside {
+      position: static;
+    }
+
+    .sn-info-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 45rem) {
+    .sn-page-hero__inner,
+    .sn-shipping-returns__body {
+      width: calc(100% - 2.5rem);
+    }
+
+    .sn-page h1 {
+      font-size: 2.25rem;
+    }
+
+    .sn-shipping-returns__body {
+      padding-block: 3rem;
+    }
+
+    .sn-info-panel,
+    .sn-shipping-returns__aside {
+      padding: 1.5rem;
+    }
+
+    .sn-rate-table > div {
+      grid-template-columns: 1fr;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Sakura shipping returns",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Sakura shipping returns"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,268 @@
+<section class="sn-page sn-page--faq full-width">
+  <div class="sn-page-hero">
+    <div class="sn-page-hero__inner">
+      <nav class="sn-page-breadcrumb" aria-label="Breadcrumb">
+        <a href="{{ routes.root_url }}">Home</a>
+        <span>/</span>
+        <span>FAQ</span>
+      </nav>
+
+      <p class="sn-eyebrow">FAQ</p>
+      <h1>Questions before ordering?</h1>
+      <p>Learn about authenticity, international shipping, customs, payment methods, and order support.</p>
+    </div>
+  </div>
+
+  <div class="sn-faq-page__body">
+    <div class="sn-faq-page__list">
+      <details open>
+        <summary>Are items authentic?</summary>
+        <p>Yes. Sakura Nexus sells authentic Japanese anime goods sourced from personal collections in Japan. Product photos, condition details, and notes are provided so you can review each item before ordering.</p>
+      </details>
+
+      <details>
+        <summary>Do you ship internationally?</summary>
+        <p>Yes. Orders are shipped from Japan to supported international destinations. Available countries and shipping rates are confirmed during checkout.</p>
+      </details>
+
+      <details>
+        <summary>Do you ship worldwide?</summary>
+        <p>We ship to supported countries and regions. Shipping availability is confirmed during checkout based on your destination.</p>
+      </details>
+
+      <details>
+        <summary>How long does shipping take?</summary>
+        <p>Delivery time depends on the destination country, shipping method, customs processing, and local carrier conditions. As a guide, North America and Europe may take 5-10 business days, Southeast Asia may take 3-7 business days, and other regions may take 7-14 business days.</p>
+      </details>
+
+      <details>
+        <summary>Can I track my order?</summary>
+        <p>Yes. A tracking number will be sent to your email once your order has shipped.</p>
+      </details>
+
+      <details>
+        <summary>What payment methods are accepted?</summary>
+        <p>Available payment methods are handled through Shopify Checkout and may include major credit cards and other payment options enabled for your region.</p>
+      </details>
+
+      <details>
+        <summary>Are customs fees included?</summary>
+        <p>No. Customs duties, import taxes, and customs fees are not included in the item price or shipping cost. These charges are the buyer's responsibility. Please check with your local customs office before ordering.</p>
+      </details>
+
+      <details>
+        <summary>Can I cancel my order?</summary>
+        <p>Please contact us as soon as possible. If your order has not been prepared or shipped, we will review whether cancellation is possible. Shipped orders cannot usually be cancelled.</p>
+      </details>
+
+      <details>
+        <summary>What if my item arrives damaged?</summary>
+        <p>Please contact us within 7 days of delivery with your order number and clear photos of the outer packaging, inner packaging, and damaged item. We will review the issue and determine whether a refund, partial refund, or shipping insurance claim is appropriate.</p>
+      </details>
+
+      <details>
+        <summary>Do you accept returns?</summary>
+        <p>Due to the nature of collectible goods, we do not accept returns or exchanges for buyer's remorse, change of mind, incorrect orders made by the customer, opened items, or used items after delivery. If your item arrives damaged or significantly differs from the description, please contact us within 7 days of delivery with your order number and clear photos.</p>
+      </details>
+
+      <details>
+        <summary>What happens if I refuse customs payment?</summary>
+        <p>Customs duties, import taxes, and customs fees are the buyer's responsibility. Refusal to pay customs duties or failure to complete customs procedures does not qualify for a refund.</p>
+      </details>
+    </div>
+
+    <aside class="sn-faq-page__cta">
+      <h2>Still need help?</h2>
+      <p>If you have questions about an item, shipping, returns, or your order, review the shipping guide or send us a message.</p>
+      <a class="sn-button sn-button--ghost" href="/pages/shipping-returns">Shipping & Returns</a>
+      <a class="sn-button sn-button--primary" href="/pages/contact">Contact Us</a>
+    </aside>
+  </div>
+</section>
+
+{% stylesheet %}
+  .sn-page {
+    --sn-pink: #e8a0bf;
+    --sn-pink-strong: #d67ca7;
+    --sn-pink-soft: #fff5f8;
+    --sn-ink: #1f1f1f;
+    --sn-muted: #6b7280;
+    --sn-body: #374151;
+    --sn-line: #e5e7eb;
+    --sn-cream: #faf7f2;
+    color: var(--sn-ink);
+    background: #fff;
+    font-family: var(--font-primary--family);
+  }
+
+  .sn-page a {
+    text-decoration: none;
+  }
+
+  .sn-page-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--sn-cream);
+  }
+
+  .sn-page-hero::after {
+    content: '';
+    position: absolute;
+    top: -4rem;
+    right: -3rem;
+    width: 18rem;
+    height: 18rem;
+    border-radius: 62.44rem;
+    background: rgba(232, 160, 191, 0.16);
+  }
+
+  .sn-page-hero__inner,
+  .sn-faq-page__body {
+    width: var(--sn-wide-content-width);
+    margin: 0 auto;
+  }
+
+  .sn-page-hero__inner {
+    position: relative;
+    z-index: 1;
+    padding: 2rem 0 4rem;
+  }
+
+  .sn-page-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5625rem;
+    color: var(--sn-muted);
+    font-size: 0.8125rem;
+  }
+
+  .sn-page-breadcrumb a {
+    color: inherit;
+  }
+
+  .sn-page .sn-eyebrow {
+    margin-top: 2.25rem;
+    color: var(--sn-pink-strong);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .sn-page h1 {
+    max-width: 46rem;
+    margin-top: 0.875rem;
+    font-size: 3rem;
+    line-height: 1.06;
+    font-weight: 900;
+  }
+
+  .sn-page-hero__inner > p:not(.sn-eyebrow) {
+    max-width: 44rem;
+    margin-top: 1rem;
+    color: var(--sn-body);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .sn-faq-page__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 21rem;
+    gap: 2rem;
+    padding: 4.5rem 0;
+    align-items: start;
+  }
+
+  .sn-faq-page__list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .sn-faq-page__list details,
+  .sn-faq-page__cta {
+    border: 0.0625rem solid var(--sn-line);
+    border-radius: 0.5rem;
+    background: #fff;
+  }
+
+  .sn-faq-page__list summary {
+    min-height: 4rem;
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    color: var(--sn-ink);
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .sn-faq-page__list p {
+    padding: 0 1.25rem 1.25rem;
+    color: var(--sn-body);
+    font-size: 0.9375rem;
+    line-height: 1.65;
+  }
+
+  .sn-faq-page__cta {
+    position: sticky;
+    top: 1.5rem;
+    padding: 1.5rem;
+    background: var(--sn-pink-soft);
+  }
+
+  .sn-faq-page__cta h2 {
+    font-size: 1.25rem;
+  }
+
+  .sn-faq-page__cta p {
+    margin-top: 0.875rem;
+    color: var(--sn-body);
+    font-size: 0.875rem;
+    line-height: 1.55;
+  }
+
+  .sn-faq-page__cta .sn-button {
+    margin-top: 1.25rem;
+    margin-right: 0.75rem;
+  }
+
+  @media (max-width: 56.25rem) {
+    .sn-page-hero__inner,
+    .sn-faq-page__body {
+      width: calc(100% - 4rem);
+    }
+
+    .sn-faq-page__body {
+      grid-template-columns: 1fr;
+    }
+
+    .sn-faq-page__cta {
+      position: static;
+    }
+  }
+
+  @media (max-width: 45rem) {
+    .sn-page-hero__inner,
+    .sn-faq-page__body {
+      width: calc(100% - 2.5rem);
+    }
+
+    .sn-page h1 {
+      font-size: 2.25rem;
+    }
+
+    .sn-faq-page__body {
+      padding-block: 3rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Sakura FAQ page",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Sakura FAQ page"
+    }
+  ]
+}
+{% endschema %}

@@ -66,8 +66,8 @@
             endif
           endif
         %}
-        <a class="sn-product-card" href="{{ product.url }}" aria-label="View details for {{ product.title | escape }}">
-          <span class="sn-product-card__image">
+        <a class="sn-home-product-card" href="{{ product.url }}" aria-label="View details for {{ product.title | escape }}">
+          <span class="sn-home-product-card__image">
             {% if product.featured_image %}
               {{ product.featured_image | image_url: width: 544 | image_tag: loading: 'lazy', alt: product.title }}
             {% else %}
@@ -76,8 +76,8 @@
             <span class="sn-badge sn-badge--{{ condition | handleize }}">{{ condition }}</span>
           </span>
           <h3>{{ product.title | escape }}</h3>
-          <p class="sn-product-card__price">{{ product.price | money }}</p>
-          <p class="sn-product-card__stock">{% if product.available %}In Stock{% else %}Sold Out{% endif %}</p>
+          <p class="sn-home-product-card__price">{{ product.price | money }}</p>
+          <p class="sn-home-product-card__stock">{% if product.available %}In Stock{% else %}Sold Out{% endif %}</p>
         </a>
       {% endfor %}
     </div>
@@ -109,8 +109,8 @@
                 endif
               endif
             %}
-            <a class="sn-product-card" href="{{ product.url }}" aria-label="View details for {{ product.title | escape }}">
-              <span class="sn-product-card__image">
+            <a class="sn-home-product-card" href="{{ product.url }}" aria-label="View details for {{ product.title | escape }}">
+              <span class="sn-home-product-card__image">
                 {% if product.featured_image %}
                   {{ product.featured_image | image_url: width: 544 | image_tag: loading: 'lazy', alt: product.title }}
                 {% else %}
@@ -119,8 +119,8 @@
                 <span class="sn-badge sn-badge--{{ condition | handleize }}">{{ condition }}</span>
               </span>
               <h3>{{ product.title | escape }}</h3>
-              <p class="sn-product-card__price">{{ product.price | money }}</p>
-              <p class="sn-product-card__stock">{% if product.available %}In Stock{% else %}Sold Out{% endif %}</p>
+              <p class="sn-home-product-card__price">{{ product.price | money }}</p>
+              <p class="sn-home-product-card__stock">{% if product.available %}In Stock{% else %}Sold Out{% endif %}</p>
             </a>
           {% endif %}
         {% endif %}
@@ -139,8 +139,8 @@
               endif
             endif
           %}
-          <a class="sn-product-card" href="{{ product.url }}" aria-label="View details for {{ product.title | escape }}">
-            <span class="sn-product-card__image">
+          <a class="sn-home-product-card" href="{{ product.url }}" aria-label="View details for {{ product.title | escape }}">
+            <span class="sn-home-product-card__image">
               {% if product.featured_image %}
                 {{ product.featured_image | image_url: width: 544 | image_tag: loading: 'lazy', alt: product.title }}
               {% else %}
@@ -149,8 +149,8 @@
               <span class="sn-badge sn-badge--{{ condition | handleize }}">{{ condition }}</span>
             </span>
             <h3>{{ product.title | escape }}</h3>
-            <p class="sn-product-card__price">{{ product.price | money }}</p>
-            <p class="sn-product-card__stock">{% if product.available %}In Stock{% else %}Sold Out{% endif %}</p>
+            <p class="sn-home-product-card__price">{{ product.price | money }}</p>
+            <p class="sn-home-product-card__stock">{% if product.available %}In Stock{% else %}Sold Out{% endif %}</p>
           </a>
         {% endfor %}
       {% endif %}
@@ -200,30 +200,32 @@
   </section>
 
   <section class="sn-about">
-    <div class="sn-about__copy">
-      <p class="sn-eyebrow">About Sakura Nexus</p>
-      <h2>Direct from Japan,<br>For Anime Lovers Worldwide</h2>
-      <p>
-        Sakura Nexus offers authentic Japanese anime collectibles sourced from personal collections in Japan. Every item is carefully inspected and shipped with care directly to you.
-      </p>
-      <div class="sn-actions">
-        <a class="sn-button sn-button--primary" href="{{ routes.all_products_collection_url }}">Shop Items</a>
-        <a class="sn-button sn-button--ghost" href="/pages/faq">Read FAQ</a>
+    <div class="sn-about__inner">
+      <div class="sn-about__copy">
+        <p class="sn-eyebrow">About Sakura Nexus</p>
+        <h2>Direct from Japan,<br>For Anime Lovers Worldwide</h2>
+        <p>
+          Sakura Nexus offers authentic Japanese anime collectibles sourced from personal collections in Japan. Every item is carefully inspected and shipped with care directly to you.
+        </p>
+        <div class="sn-actions">
+          <a class="sn-button sn-button--primary" href="{{ routes.all_products_collection_url }}">Shop Items</a>
+          <a class="sn-button sn-button--ghost" href="/pages/faq">Read FAQ</a>
+        </div>
       </div>
-    </div>
 
-    <div class="sn-stats" aria-label="Sakura Nexus facts">
-      <div>
-        <strong>100%</strong>
-        <span>Authentic Goods</span>
-      </div>
-      <div>
-        <strong>Japan</strong>
-        <span>Ships From</span>
-      </div>
-      <div>
-        <strong>Worldwide</strong>
-        <span>Delivery</span>
+      <div class="sn-stats" aria-label="Sakura Nexus facts">
+        <div>
+          <strong>100%</strong>
+          <span>Authentic Goods</span>
+        </div>
+        <div>
+          <strong>Japan</strong>
+          <span>Ships From</span>
+        </div>
+        <div>
+          <strong>Worldwide</strong>
+          <span>Delivery</span>
+        </div>
       </div>
     </div>
   </section>
@@ -506,13 +508,15 @@
     gap: var(--sn-product-card-gap, 1.5rem);
     justify-content: stretch;
     justify-items: stretch;
+    align-items: start;
   }
 
-  .sn-product-card {
+  .sn-home-product-card {
     width: 100%;
-    max-width: var(--sn-product-card-max-width, 18.75rem);
-    aspect-ratio: var(--sn-product-card-ratio, 125 / 176);
+    max-width: none;
+    height: auto;
     min-width: 0;
+    align-self: start;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -523,7 +527,7 @@
     text-decoration: none;
   }
 
-  .sn-product-card__image {
+  .sn-home-product-card__image {
     position: relative;
     flex: 0 0 auto;
     aspect-ratio: var(--sn-product-card-image-ratio, 25 / 21);
@@ -531,7 +535,7 @@
     background: #f4f4f5;
   }
 
-  .sn-product-card__image img {
+  .sn-home-product-card__image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -578,22 +582,23 @@
     color: #fff;
   }
 
-  .sn-product-card h3 {
+  .sn-home-product-card h3 {
     margin: 1.125rem 1.125rem 0;
-    min-height: 2.5rem;
+    min-height: 2.375rem;
     font-size: 0.875rem;
     line-height: 1.35;
     font-weight: 700;
   }
 
-  .sn-product-card__price {
+  .sn-home-product-card__price {
     margin: 0.75rem 1.125rem 0;
     font-size: 1.25rem;
+    line-height: 1.2;
     font-weight: 800;
   }
 
-  .sn-product-card__stock {
-    margin: 0.25rem 1.125rem 1.125rem;
+  .sn-home-product-card__stock {
+    margin: 0.25rem 1.125rem 0.75rem 1.125rem !important;
     color: var(--sn-muted);
     font-size: 0.75rem;
   }
@@ -662,13 +667,26 @@
     font-size: 1rem;
   }
 
+  .sn-product-card__stock {
+    margin: 0.25rem 1.125rem 1.125rem !important;
+  }
+
+  .sn-product-card {
+    aspect-ratio: unset !important;
+  }
+
   .sn-about {
     position: relative;
     overflow: hidden;
     padding-block: 5.5rem;
+  }
+
+  .sn-about__inner {
+    width: var(--sn-wide-content-width);
+    margin: 0 auto;
     display: grid;
-    grid-template-columns: 8rem minmax(0, 1fr) minmax(0, 1fr) 8rem;
-    gap: 0rem;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1.5rem;
     align-items: center;
   }
 
@@ -680,7 +698,6 @@
   }
 
   .sn-about__copy {
-    grid-column: 2;
     position: relative;
     z-index: 1;
   }
@@ -700,7 +717,6 @@
   }
 
   .sn-stats {
-    grid-column: 3;
     position: relative;
     z-index: 1;
     display: grid;
@@ -782,15 +798,14 @@
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
-    .sn-about {
+    .sn-about__inner {
+      width: calc(100% - 4rem);
       grid-template-columns: 1fr;
     }
 
     .sn-about__copy,
     .sn-stats {
-      grid-column: 1;
-      width: calc(100% - 4rem);
-      margin-inline: auto;
+      width: 100%;
     }
   }
 
@@ -856,6 +871,10 @@
 
     .sn-about__copy,
     .sn-stats {
+      width: 100%;
+    }
+
+    .sn-about__inner {
       width: calc(100% - 2.5rem);
     }
 
