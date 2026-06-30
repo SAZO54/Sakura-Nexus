@@ -124,8 +124,10 @@
             data-sn-save-product
             data-product-id="{{ product.id }}"
           >
-            <span aria-hidden="true">♡</span>
-            <span>Save item</span>
+            <svg class="sn-save-product__icon" aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"></path>
+            </svg>
+            <span>Add to Watchlist</span>
           </button>
 
           <div class="sn-description-card">
@@ -596,6 +598,21 @@
     color: var(--sn-pink-strong);
   }
 
+  .sn-save-product__icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex: 0 0 auto;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .sn-save-product[aria-pressed="true"] .sn-save-product__icon {
+    fill: currentColor;
+  }
+
   .sn-trust-notes {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -976,12 +993,10 @@
   if (saveButton) {
     const key = `sn_saved_product_${saveButton.dataset.productId}`;
     const label = saveButton.querySelector('span:last-child');
-    const icon = saveButton.querySelector('span:first-child');
 
     const syncSavedState = (saved) => {
       saveButton.setAttribute('aria-pressed', String(saved));
-      if (label) label.textContent = saved ? 'Saved' : 'Save item';
-      if (icon) icon.textContent = saved ? '❤' : '♡';
+      if (label) label.textContent = saved ? 'Added to Watchlist' : 'Add to Watchlist';
     };
 
     let isSaved = false;

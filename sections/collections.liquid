@@ -1,83 +1,412 @@
-{% comment %}
-  This section is used in the list-collections template to render a list of
-  collections.
+<section class="sn-collections-page full-width">
+  <div class="sn-collections-page__hero">
+    <div class="sn-collections-page__hero-inner">
+      <nav class="sn-collections-page__breadcrumb" aria-label="Breadcrumb">
+        <a href="{{ routes.root_url }}">Home</a>
+        <span>/</span>
+        <span>Collections</span>
+      </nav>
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
-{% endcomment %}
+      <p class="sn-collections-page__eyebrow">Browse collections</p>
+      <h1>Find Your Next Anime Collectible</h1>
+      <p>Shop authentic Japanese anime goods by series, character, and item type.</p>
 
-<h1>{{ 'collections.title' | t }}</h1>
-
-<div
-  class="collections {{ section.settings.grid_item_width }}"
-  style="--grid-gap: {{ section.settings.grid_gap | divided_by: 16.0 }}rem"
->
-  {% for collection in collections %}
-    <a class="collection-card" href="{{ collection.url }}">
-      {% if collection.featured_image %}
-        {% render 'image',
-          class: 'collection-card__image',
-          image: collection.featured_image,
-          width: 600,
-          height: 600,
-          crop: 'center'
-        %}
-      {% endif %}
-
-      <div class="collection-card__content">
-        <p>{{ collection.title }}</p>
-
-        {% if collection.description %}
-          <p>{{ collection.description | strip_html | truncatewords: 15 }}</p>
-        {% endif %}
+      <div class="sn-collections-page__actions">
+        <a class="sn-collections-page__button sn-collections-page__button--primary" href="{{ routes.all_products_collection_url }}">Shop All Items</a>
+        <a class="sn-collections-page__button sn-collections-page__button--ghost" href="/pages/shipping-returns">Shipping & Returns</a>
       </div>
-    </a>
-  {% endfor %}
-</div>
+    </div>
+  </div>
+
+  <div class="sn-collections-page__body">
+    <section class="sn-collections-page__section">
+      <div class="sn-collections-page__heading">
+        <p class="sn-collections-page__eyebrow">Featured</p>
+        <h2>Featured Collections</h2>
+      </div>
+
+      <div class="sn-collections-page__featured-grid">
+        <a class="sn-collections-page__image-card" href="{{ routes.collections_url }}/one-piece">
+          <img src="{{ 'sakura-collection-one-piece.jpg' | asset_url }}" alt="" width="420" height="300" loading="lazy">
+          <span>Series</span>
+          <strong>ONE PIECE</strong>
+          <p>Browse all ONE PIECE goods.</p>
+        </a>
+
+        <a class="sn-collections-page__image-card" href="{{ routes.collections_url }}/zoro-collection">
+          <img src="{{ 'sakura-collection-zoro.jpg' | asset_url }}" alt="" width="420" height="300" loading="lazy">
+          <span>Character</span>
+          <strong>Zoro Collection</strong>
+          <p>Items for Zoro fans.</p>
+        </a>
+
+        <a class="sn-collections-page__image-card" href="{{ routes.collections_url }}/figures">
+          <img src="{{ 'sakura-collection-figures.jpg' | asset_url }}" alt="" width="420" height="300" loading="lazy">
+          <span>Item type</span>
+          <strong>Figures</strong>
+          <p>Collectible figures from Japan.</p>
+        </a>
+
+        <a class="sn-collections-page__image-card" href="{{ routes.collections_url }}/acrylic-stands">
+          <img src="{{ 'sakura-collection-acrylic.jpg' | asset_url }}" alt="" width="420" height="300" loading="lazy">
+          <span>Item type</span>
+          <strong>Acrylic Stands</strong>
+          <p>Display-ready acrylic items.</p>
+        </a>
+
+        <a class="sn-collections-page__image-card" href="{{ routes.collections_url }}/badges">
+          <img src="{{ 'sakura-collection-badges.jpg' | asset_url }}" alt="" width="420" height="300" loading="lazy">
+          <span>Small goods</span>
+          <strong>Badges & Cards</strong>
+          <p>Small collectibles and card sets.</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="sn-collections-page__section sn-collections-page__section--split">
+      <div>
+        <div class="sn-collections-page__heading">
+          <p class="sn-collections-page__eyebrow">Shop by type</p>
+          <h2>Item Types</h2>
+        </div>
+
+        <div class="sn-collections-page__link-grid">
+          <a href="{{ routes.collections_url }}/figures"><strong>Figures</strong><span>Scale, prize, and display figures</span></a>
+          <a href="{{ routes.collections_url }}/acrylic-stands"><strong>Acrylic Stands</strong><span>Desktop and shelf display goods</span></a>
+          <a href="{{ routes.collections_url }}/badges"><strong>Badges</strong><span>Pin badges and small collectibles</span></a>
+          <a href="{{ routes.collections_url }}/cards"><strong>Cards</strong><span>Trading cards and card sets</span></a>
+          <a href="{{ routes.collections_url }}/plush"><strong>Plush</strong><span>Soft character collectibles</span></a>
+          <a href="{{ routes.collections_url }}/other-goods"><strong>Other Goods</strong><span>Selected anime goods from Japan</span></a>
+        </div>
+      </div>
+
+      <aside class="sn-collections-page__guide">
+        <h2>New to Sakura Nexus?</h2>
+        <p>All items ship from Japan. Learn about shipping fees, delivery estimates, customs, and returns before ordering.</p>
+        <a class="sn-collections-page__button sn-collections-page__button--primary" href="/pages/shipping-returns">View Shipping & Returns</a>
+        <a class="sn-collections-page__text-link" href="/pages/faq">Read FAQ</a>
+      </aside>
+    </section>
+  </div>
+</section>
 
 {% stylesheet %}
-  .collections {
+  .sn-collections-page {
+    --sn-pink: #e8a0bf;
+    --sn-pink-strong: #d67ca7;
+    --sn-pink-soft: #fff5f8;
+    --sn-ink: #1f1f1f;
+    --sn-muted: #6b7280;
+    --sn-body: #374151;
+    --sn-line: #e5e7eb;
+    --sn-cream: #faf7f2;
+    color: var(--sn-ink);
+    background: #fff;
+    font-family: var(--font-primary--family);
+  }
+
+  .sn-collections-page a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .sn-collections-page__hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--sn-cream);
+  }
+
+  .sn-collections-page__hero::after {
+    content: '';
+    position: absolute;
+    top: -4rem;
+    right: -3rem;
+    width: 18rem;
+    height: 18rem;
+    border-radius: 62.44rem;
+    background: rgba(232, 160, 191, 0.16);
+    pointer-events: none;
+  }
+
+  .sn-collections-page__hero-inner,
+  .sn-collections-page__body {
+    width: var(--sn-wide-content-width);
+    margin: 0 auto;
+  }
+
+  .sn-collections-page__hero-inner {
+    position: relative;
+    z-index: 1;
+    padding: 2rem 0 4rem;
+  }
+
+  .sn-collections-page__breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5625rem;
+    color: var(--sn-muted);
+    font-size: 0.8125rem;
+  }
+
+  .sn-collections-page__eyebrow {
+    margin-top: 2.25rem;
+    color: var(--sn-pink-strong);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .sn-collections-page h1 {
+    max-width: 46rem;
+    margin-top: 0.875rem;
+    font-size: 3rem;
+    line-height: 1.06;
+    font-weight: 900;
+  }
+
+  .sn-collections-page__hero-inner > p:not(.sn-collections-page__eyebrow) {
+    max-width: 44rem;
+    margin-top: 1rem;
+    color: var(--sn-body);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .sn-collections-page__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.875rem;
+  }
+
+  .sn-collections-page__button {
+    min-height: 3rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 8.875rem;
+    padding: 0 1.625rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 800;
+  }
+
+  .sn-collections-page__button--primary {
+    background: var(--sn-pink);
+    color: #fff;
+  }
+
+  .sn-collections-page__button--ghost {
+    border: 0.125rem solid var(--sn-pink);
+    background: #fff;
+    color: var(--sn-pink);
+  }
+
+  .sn-collections-page__body {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(var(--collection-card-size), 100%), 1fr));
-    gap: var(--grid-gap);
+    gap: 4rem;
+    padding: 4.5rem 0;
   }
-  .collections--compact {
-    --collection-card-size: 10rem;
+
+  .sn-collections-page__heading h2 {
+    margin-top: 0.75rem;
+    font-size: 1.875rem;
+    line-height: 1.2;
+    font-weight: 800;
   }
-  .collections--full {
-    --collection-card-size: 17.5rem;
+
+  .sn-collections-page__featured-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
   }
-  .collection-card {
+
+  .sn-collections-page__image-card {
+    position: relative;
+    min-height: 15rem;
+    overflow: hidden;
+    padding: 1.25rem;
     display: flex;
     flex-direction: column;
+    justify-content: flex-end;
+    border: 0.0625rem solid var(--sn-line);
+    border-radius: 0.5rem;
+    background: var(--sn-pink-soft);
+  }
+
+  .sn-collections-page__image-card img {
+    position: absolute;
+    inset: 0;
     width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.9;
+    transition: transform 180ms ease;
+  }
+
+  .sn-collections-page__image-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255, 245, 248, 0.08), rgba(255, 245, 248, 0.94));
+  }
+
+  .sn-collections-page__image-card:hover img {
+    transform: scale(1.04);
+  }
+
+  .sn-collections-page__image-card span,
+  .sn-collections-page__image-card strong,
+  .sn-collections-page__image-card p {
+    position: relative;
+    z-index: 1;
+  }
+
+  .sn-collections-page__image-card span {
+    color: var(--sn-pink-strong);
+    font-size: 0.6875rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .sn-collections-page__image-card strong {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+  }
+
+  .sn-collections-page__image-card p {
+    margin-top: 0.625rem;
+    color: var(--sn-body);
+    font-size: 0.8125rem;
+    line-height: 1.45;
+  }
+
+  .sn-collections-page__section--split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 21rem;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .sn-collections-page__link-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .sn-collections-page__link-grid a,
+  .sn-collections-page__guide {
+    border: 0.0625rem solid var(--sn-line);
+    border-radius: 0.5rem;
+    background: #fff;
+  }
+
+  .sn-collections-page__link-grid a {
+    display: block;
+    padding: 1.25rem;
+  }
+
+  .sn-collections-page__link-grid strong,
+  .sn-collections-page__link-grid span {
+    display: block;
+  }
+
+  .sn-collections-page__link-grid strong {
+    font-size: 0.9375rem;
+  }
+
+  .sn-collections-page__link-grid span {
+    margin-top: 0.625rem;
+    color: var(--sn-muted);
+    font-size: 0.8125rem;
+    line-height: 1.45;
+  }
+
+  .sn-collections-page__guide {
+    position: sticky;
+    top: 1.5rem;
+    padding: 1.5rem;
+    background: var(--sn-pink-soft);
+  }
+
+  .sn-collections-page__guide h2 {
+    font-size: 1.25rem;
+    line-height: 1.25;
+  }
+
+  .sn-collections-page__guide p {
+    margin-top: 0.875rem;
+    color: var(--sn-body);
+    font-size: 0.875rem;
+    line-height: 1.55;
+  }
+
+  .sn-collections-page__guide .sn-collections-page__button {
+    margin-top: 1.25rem;
+  }
+
+  .sn-collections-page__text-link {
+    display: block;
+    width: fit-content;
+    margin-top: 1rem;
+    color: var(--sn-pink-strong);
+    font-size: 0.8125rem;
+    font-weight: 800;
+  }
+
+  @media (max-width: 68.75rem) {
+    .sn-collections-page__featured-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .sn-collections-page__section--split {
+      grid-template-columns: 1fr;
+    }
+
+    .sn-collections-page__guide {
+      position: static;
+    }
+  }
+
+  @media (max-width: 56.25rem) {
+    .sn-collections-page__hero-inner,
+    .sn-collections-page__body {
+      width: calc(100% - 4rem);
+    }
+  }
+
+  @media (max-width: 45rem) {
+    .sn-collections-page__hero-inner,
+    .sn-collections-page__body {
+      width: calc(100% - 2.5rem);
+    }
+
+    .sn-collections-page h1 {
+      font-size: 2.25rem;
+    }
+
+    .sn-collections-page__body {
+      gap: 3rem;
+      padding-block: 3rem;
+    }
+
+    .sn-collections-page__featured-grid,
+    .sn-collections-page__link-grid {
+      grid-template-columns: 1fr;
+    }
   }
 {% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.collections_grid",
-  "settings": [
+  "settings": [],
+  "presets": [
     {
-      "type": "select",
-      "id": "grid_item_width",
-      "label": "t:labels.grid_item_width",
-      "options": [
-        { "value": "collections--compact", "label": "t:options.size.small" },
-        { "value": "collections--full", "label": "t:options.size.large" }
-      ],
-      "default": "collections--full"
-    },
-    {
-      "type": "range",
-      "id": "grid_gap",
-      "label": "t:labels.grid_gap",
-      "min": 0,
-      "max": 50,
-      "step": 5,
-      "unit": "px",
-      "default": 10
+      "name": "t:general.collections_grid"
     }
-  ],
-  "presets": [{ "name": "t:general.collections_grid" }]
+  ]
 }
 {% endschema %}
