@@ -11,8 +11,8 @@
 {% enddoc %}
 
 {% liquid
-  assign related_max_products = max_products | default: 4
-  assign related_loop_limit = loop_limit | default: 8
+  assign related_max_products = max_products | default: 8
+  assign related_loop_limit = loop_limit | default: 12
   assign related_count = 0
 %}
 
@@ -25,7 +25,7 @@
     <a href="{{ routes.all_products_collection_url }}">View All &rarr;</a>
   </div>
 
-  <div class="sn-related-grid">
+  <div class="sn-related-grid sn-related-grid--single-row">
     {% for related_product in collections.all.products limit: related_loop_limit %}
       {% liquid
         assign should_render_related_product = true
@@ -103,6 +103,52 @@
     margin-top: 2.125rem;
   }
 
+  .sn-related-grid--single-row {
+    container-type: inline-size;
+  }
+
+  @container (max-width: 27.499rem) {
+    .sn-related-grid--single-row > :nth-child(n + 2) {
+      display: none;
+    }
+  }
+
+  @container (min-width: 27.5rem) and (max-width: 41.999rem) {
+    .sn-related-grid--single-row > :nth-child(n + 3) {
+      display: none;
+    }
+  }
+
+  @container (min-width: 42rem) and (max-width: 56.499rem) {
+    .sn-related-grid--single-row > :nth-child(n + 4) {
+      display: none;
+    }
+  }
+
+  @container (min-width: 56.5rem) and (max-width: 70.999rem) {
+    .sn-related-grid--single-row > :nth-child(n + 5) {
+      display: none;
+    }
+  }
+
+  @container (min-width: 71rem) and (max-width: 85.499rem) {
+    .sn-related-grid--single-row > :nth-child(n + 6) {
+      display: none;
+    }
+  }
+
+  @container (min-width: 85.5rem) and (max-width: 99.999rem) {
+    .sn-related-grid--single-row > :nth-child(n + 7) {
+      display: none;
+    }
+  }
+
+  @container (min-width: 100rem) and (max-width: 114.499rem) {
+    .sn-related-grid--single-row > :nth-child(n + 8) {
+      display: none;
+    }
+  }
+
   .sn-related-card {
     width: 100%;
     max-width: none;
@@ -134,11 +180,17 @@
   }
 
   .sn-related-card h3 {
+    height: 2.375rem;
     min-height: 2.375rem;
     margin: 1.125rem 1.125rem 0;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
     font-size: 0.875rem;
     line-height: 1.35;
     font-weight: 700;
+    text-overflow: ellipsis;
   }
 
   .sn-related-card__price {
